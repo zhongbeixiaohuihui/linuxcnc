@@ -132,21 +132,21 @@ static const hm2_sserial_data_t hm2_8i20_params[] = {
 static const hm2_sserial_data_t hm2_8i20_globals[] = { 
     {LBP_DATA,0x10,LBP_UNSIGNED,LBP_IN,0,0,2164,"none","swrevision"},
     {LBP_DATA,0x20,LBP_UNSIGNED,LBP_IN,0,0,2344,"none","unitnumber"},
-    {LBP_DATA,0x10,LBP_NONVOL_UNSIGNED,LBP_IN,0,32.768,2,"amps","nvmaxcurrent"},
-    {LBP_DATA,0x10,LBP_NONVOL_UNSIGNED,LBP_IN,0,0,36,"volts","nvbusundervmax"},
-    {LBP_DATA,0x10,LBP_NONVOL_UNSIGNED,LBP_IN,0,0,34,"volts","nvbusundervmin"},
-    {LBP_DATA,0x10,LBP_NONVOL_UNSIGNED,LBP_IN,0,0,38,"volts","nvbusoverv"},
-    {LBP_DATA,0x10,LBP_NONVOL_UNSIGNED,LBP_IN,0,0,40,"volts","nvbrakeonv"},
-    {LBP_DATA,0x10,LBP_NONVOL_UNSIGNED,LBP_IN,0,0,42,"volts","nvbrakeoffv"},
-    {LBP_DATA,0x10,LBP_NONVOL_UNSIGNED,LBP_IN,0,0,6,"bps","nvrembaudrate"},
-    {LBP_DATA,0x10,LBP_NONVOL_UNSIGNED,LBP_IN,0,0,10,"none","nvkqp"},
-    {LBP_DATA,0x10,LBP_NONVOL_UNSIGNED,LBP_IN,0,0,14,"none","nvkqihi"},
-    {LBP_DATA,0x10,LBP_NONVOL_UNSIGNED,LBP_IN,0,0,12,"none","nvkqilo"},
-    {LBP_DATA,0x10,LBP_NONVOL_UNSIGNED,LBP_IN,0,0,16,"none","nvkqil"},
-    {LBP_DATA,0x10,LBP_NONVOL_UNSIGNED,LBP_IN,0,0,18,"none","nvkdp"},
-    {LBP_DATA,0x10,LBP_NONVOL_UNSIGNED,LBP_IN,0,0,22,"none","nvkdihi"},
-    {LBP_DATA,0x10,LBP_NONVOL_UNSIGNED,LBP_IN,0,0,20,"none","nvkdilo"},
-    {LBP_DATA,0x10,LBP_NONVOL_UNSIGNED,LBP_IN,0,0,24,"none","nvkdil"}
+    {LBP_DATA,0x10,LBP_NONVOL_UNSIGNED,LBP_OUT,0,32.768,2,"amps","nvmaxcurrent"},
+    {LBP_DATA,0x10,LBP_NONVOL_UNSIGNED,LBP_OUT,0,0,36,"volts","nvbusundervmax"},
+    {LBP_DATA,0x10,LBP_NONVOL_UNSIGNED,LBP_OUT,0,0,34,"volts","nvbusundervmin"},
+    {LBP_DATA,0x10,LBP_NONVOL_UNSIGNED,LBP_OUT,0,0,38,"volts","nvbusoverv"},
+    {LBP_DATA,0x10,LBP_NONVOL_UNSIGNED,LBP_OUT,0,0,40,"volts","nvbrakeonv"},
+    {LBP_DATA,0x10,LBP_NONVOL_UNSIGNED,LBP_OUT,0,0,42,"volts","nvbrakeoffv"},
+    {LBP_DATA,0x10,LBP_NONVOL_UNSIGNED,LBP_OUT,0,0,6,"bps","nvrembaudrate"},
+    {LBP_DATA,0x10,LBP_NONVOL_UNSIGNED,LBP_OUT,0,0,10,"none","nvkqp"},
+    {LBP_DATA,0x10,LBP_NONVOL_UNSIGNED,LBP_OUT,0,0,14,"none","nvkqihi"},
+    {LBP_DATA,0x10,LBP_NONVOL_UNSIGNED,LBP_OUT,0,0,12,"none","nvkqilo"},
+    {LBP_DATA,0x10,LBP_NONVOL_UNSIGNED,LBP_OUT,0,0,16,"none","nvkqil"},
+    {LBP_DATA,0x10,LBP_NONVOL_UNSIGNED,LBP_OUT,0,0,18,"none","nvkdp"},
+    {LBP_DATA,0x10,LBP_NONVOL_UNSIGNED,LBP_OUT,0,0,22,"none","nvkdihi"},
+    {LBP_DATA,0x10,LBP_NONVOL_UNSIGNED,LBP_OUT,0,0,20,"none","nvkdilo"},
+    {LBP_DATA,0x10,LBP_NONVOL_UNSIGNED,LBP_OUT,0,0,24,"none","nvkdil"}
 };
 
 static const hm2_sserial_data_t hm2_7i64_params[] = {
@@ -187,9 +187,14 @@ typedef struct {
 }hm2_sserial_pins_t;
 
 typedef struct {
+    hal_u32_t u32_board;
+    hal_s32_t s32_board;
+    hal_float_t float_board;
+    hal_bit_t bit_board;
     hal_u32_t u32_param;
     hal_s32_t s32_param;
     hal_float_t float_param;
+    hal_bit_t bit_param;
     hal_u32_t timer_num;
     hal_bit_t *error;
 }hm2_sserial_params_t;
