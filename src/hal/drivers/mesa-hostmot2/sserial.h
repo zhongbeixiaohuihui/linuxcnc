@@ -20,6 +20,7 @@
 #define __SSERIAL_H
 
 #include <rtapi_stdint.h>
+#include "hostmot2.h"
 
 #define HM2_SSERIAL_TYPE_8I20               0x30324938  // '8i20' as 4 ascii
 #define HM2_SSERIAL_TYPE_7I64               0x34364937  // '7i64' All newer cards self-declare
@@ -187,14 +188,17 @@ typedef struct {
 }hm2_sserial_pins_t;
 
 typedef struct {
-    hal_u32_t u32_board;
-    hal_s32_t s32_board;
-    hal_float_t float_board;
-    hal_bit_t bit_board;
+    // function pointer to thread-safe read/write functions
+    int (*write)(void *hm2, void *inst, long period);
+    int type;
     hal_u32_t u32_param;
     hal_s32_t s32_param;
     hal_float_t float_param;
     hal_bit_t bit_param;
+    hal_u32_t u32_written;
+    hal_s32_t s32_written;
+    hal_float_t float_written;
+    hal_bit_t bit_written;
     hal_u32_t timer_num;
     hal_bit_t *error;
 }hm2_sserial_params_t;
@@ -258,6 +262,9 @@ typedef struct {
     
     hal_bit_t *run;
     hal_u32_t *state;
+    hal_u32_t *state2;
+    hal_u32_t r_index;
+    hal_u32_t g_index;
     rtapi_u32 timer;
     bool ever_read;
 } hm2_sserial_instance_t;
