@@ -80,6 +80,7 @@
 #define LBP_BOOLEAN             0x07
 #define LBP_ENCODER             0x08
 #define LBP_FLOAT               0x10 // New for STMBL
+#define LBP_NONVOL_FLOAT        0x11 
 #define LBP_ENCODER_H           0x18 // For Fanuc Absolute Encoders with separate
 #define LBP_ENCODER_L           0x28 // part and full count fields. 
 
@@ -263,8 +264,10 @@ typedef struct {
     hal_bit_t *run;
     hal_u32_t *state;
     hal_u32_t *state2;
+    hal_u32_t *state3;
     hal_u32_t r_index;
     hal_u32_t g_index;
+    int doit_err_count;
     rtapi_u32 timer;
     bool ever_read;
 } hm2_sserial_instance_t;
