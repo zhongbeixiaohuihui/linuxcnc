@@ -2115,7 +2115,8 @@ int hm2_sserial_read_pins(hm2_sserial_remote_t *chan){
             default:
                 HM2_ERR_NO_LL("Unsupported input datatype %02X (name: ""%s"")\n",
                         conf->DataType, conf->NameString);
-                conf->DataType = 0; // Only warn once, then ignore
+                // Mask repeated error messages
+                conf->DataType = LBP_PAD;
             }
             bitcount += conf->DataLength;
         }
