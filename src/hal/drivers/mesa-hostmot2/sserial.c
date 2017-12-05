@@ -449,6 +449,7 @@ int hm2_sserial_create_params(hostmot2_t *hm2, hm2_sserial_remote_t *chan){
         global = chan->globals[i];
 
         r = 0;
+
         // bodge this for 7i69
         hal_dir = (global.DataDir == LBP_IN) ? HAL_RO : HAL_RW;
         //hal_dir = HAL_RW;
@@ -594,6 +595,7 @@ int hm2_sserial_parse_md(hostmot2_t *hm2, int md_index){
 
     hm2->sserial.version = md->version;
 
+rtapi_set_msg_level(5); //************************************************************************************
     //
     // some standard sanity checks
     //
@@ -1907,7 +1909,7 @@ void hm2_sserial_prepare_tram_write(hostmot2_t *hm2, long period){
 
     for (i = 0 ; i < hm2->sserial.num_instances ; i++ ) {
         // a state-machine to start and stop the ports,
-        // supply Do-It commands and
+        // supply Do-It commands and set up params at init.
 
         hm2_sserial_instance_t *inst = &(hm2->sserial.instance[i]);
 
@@ -1920,7 +1922,7 @@ void hm2_sserial_prepare_tram_write(hostmot2_t *hm2, long period){
                 //set the modes for the cards
                 hm2_sserial_setmode(hm2, inst);
                 *inst->command_reg_write = 0x900 | inst->tag;
-                HM2_DBG("Tag-All = %x\n", inst->tag);
+                HM2_DBG("Enabled Remotes tag = = %x\n", inst->tag);
                 *inst->fault_count = 0;
                 inst->doit_err_count = 0;
                 inst->timer = 2100000000;
@@ -2195,8 +2197,6 @@ void hm2_sserial_print_module(hostmot2_t *hm2) {
 }
 
 void hm2_sserial_setmode(hostmot2_t *hm2, hm2_sserial_instance_t *inst){
-    rtapi_u32 buff=0x00;
-    rtapi_u32 addr;
     int c;
     int n = 0;
     int i = inst->index;
@@ -2204,11 +2204,8 @@ void hm2_sserial_setmode(hostmot2_t *hm2, hm2_sserial_instance_t *inst){
     for (c = 0 ; c < inst->num_remotes ; c++){
         n = inst->remotes[c].index;
         if (hm2->config.sserial_modes[i][n] != 'x') {
-            // CS addr - write card mode
-            addr = inst->remotes[c].reg_cs_addr;
-            buff = (hm2->config.sserial_modes[i][n] - '0') << 24;
-            hm2->llio->write(hm2->llio, addr, &buff, sizeof(rtapi_u32));
-            HM2_DBG("Normal Start: Writing %08x to %04x\n", buff, addr);
+            // CS - write card mode
+            *inst->remotes[c].reg_cs_write = (hm2->config.sserial_modes[i][n] - '0') << 24;
         }
     }
 }
