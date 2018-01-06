@@ -1003,7 +1003,7 @@ int Interp::convert_cycle_xy(int motion, //!< a g-code between G_81 and G_89, a 
       block->p_number =
       block->p_number == -1.0 ? settings->cycle_p : block->p_number;
       if (block->e_flag){
-    	  CHKS((block->e_number < 0 || block->e_number > settings->num_spindles - 1),
+    	  CHKS((block->e_number < 0 || block->e_number >= settings->num_spindles),
   				(_("Invalid E-number in G74/G84 cycle")));
     	  settings->active_spindle = (int)block->e_number;
       }
@@ -1191,7 +1191,7 @@ int Interp::convert_cycle_uv(int motion, //!< a g-code between G_81 and G_89, a 
     block->p_number =
     block->p_number == -1.0 ? settings->cycle_p : block->p_number;
     if (block->e_flag){
-  	  CHKS((block->e_number < 0 || block->e_number > settings->num_spindles - 1),
+  	  CHKS((block->e_number < 0 || block->e_number >= settings->num_spindles),
 				(_("Invalid E-number in G74/G84 cycle")));
   	  settings->active_spindle = (int)block->e_number;
     }
@@ -1424,7 +1424,7 @@ int Interp::convert_cycle_yz(int motion, //!< a g-code between G_81 and G_89, a 
      block->p_number =
      block->p_number == -1.0 ? settings->cycle_p : block->p_number;
      if (block->e_flag){
-   	  CHKS((block->e_number < 0 || block->e_number > settings->num_spindles - 1),
+   	  CHKS((block->e_number < 0 || block->e_number >= settings->num_spindles),
  				(_("Invalid E-number in G74/G84 cycle")));
    	  settings->active_spindle = (int)block->e_number;
      }
@@ -1608,7 +1608,7 @@ int Interp::convert_cycle_vw(int motion, //!< a g-code between G_81 and G_89, a 
     block->p_number =
     block->p_number == -1.0 ? settings->cycle_p : block->p_number;
     if (block->e_flag){
-  	  CHKS((block->e_number < 0 || block->e_number > settings->num_spindles - 1),
+  	  CHKS((block->e_number < 0 || block->e_number >= settings->num_spindles),
 				(_("Invalid E-number in G74/G84 cycle")));
   	  settings->active_spindle = (int)block->e_number;
     }
@@ -1850,7 +1850,7 @@ int Interp::convert_cycle_zx(int motion, //!< a g-code between G_81 and G_89, a 
      block->p_number =
          block->p_number == -1.0 ? settings->cycle_p : block->p_number;
      if (block->e_flag){
-   	  CHKS((block->e_number < 0 || block->e_number > settings->num_spindles - 1),
+   	  CHKS((block->e_number < 0 || block->e_number >= settings->num_spindles),
  				(_("Invalid E-number in G74/G84 cycle")));
    	  settings->active_spindle = (int)block->e_number;
      }
@@ -2034,7 +2034,7 @@ int Interp::convert_cycle_wu(int motion, //!< a g-code between G_81 and G_89, a 
      block->p_number =
      block->p_number == -1.0 ? settings->cycle_p : block->p_number;
      if (block->e_flag){
-   	  CHKS((block->e_number < 0 || block->e_number > settings->num_spindles - 1),
+   	  CHKS((block->e_number < 0 || block->e_number >= settings->num_spindles),
  				(_("Invalid E-number in G74/G84 cycle")));
    	  settings->active_spindle = (int)block->e_number;
      }

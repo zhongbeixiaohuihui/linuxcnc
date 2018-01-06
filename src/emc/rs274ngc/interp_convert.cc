@@ -3145,7 +3145,7 @@ int Interp::convert_m(block_pointer block,       //!< pointer to a block of RS27
 				   block->m_modes[7]);
  } else if ((block->m_modes[7] == 3)  && ONCE_M(7)) {
      if (block->e_flag){
-        CHKS((block->e_number > settings->num_spindles || block->e_number < 0),
+        CHKS((block->e_number >= settings->num_spindles || block->e_number < 0),
             (_("E-word out of range in M3 Command")));
         enqueue_START_SPINDLE_CLOCKWISE(block->e_number);
         settings->spindle_turning[(int)block->e_number] = CANON_CLOCKWISE;
@@ -3157,7 +3157,7 @@ int Interp::convert_m(block_pointer block,       //!< pointer to a block of RS27
      }
  } else if ((block->m_modes[7] == 4) && ONCE_M(7)) {
      if (block->e_flag){
-        CHKS((block->e_number > settings->num_spindles || block->e_number < 0),
+        CHKS((block->e_number >= settings->num_spindles || block->e_number < 0),
             (_("E-word out of range in M4 Command")));
         enqueue_START_SPINDLE_COUNTERCLOCKWISE(block->e_number);
         settings->spindle_turning[(int)block->e_number] = CANON_COUNTERCLOCKWISE;
@@ -3169,7 +3169,7 @@ int Interp::convert_m(block_pointer block,       //!< pointer to a block of RS27
      }
  } else if ((block->m_modes[7] == 5) && ONCE_M(7)){
      if (block->e_flag){
-        CHKS((block->e_number > settings->num_spindles || block->e_number < 0),
+        CHKS((block->e_number >= settings->num_spindles || block->e_number < 0),
            (_("E-word out of range in M5 Command")));
         enqueue_STOP_SPINDLE_TURNING(block->e_number);
      } else {
@@ -3182,7 +3182,7 @@ int Interp::convert_m(block_pointer block,       //!< pointer to a block of RS27
       for (int i = 0; i < settings->num_spindles; i++)
     	  settings->spindle_turning[i] = CANON_STOPPED;
       if (block->e_flag){
-         CHKS((block->e_number > settings->num_spindles || block->e_number < 0),
+         CHKS((block->e_number >= settings->num_spindles || block->e_number < 0),
              (_("E-word out of range in M19 Command")));
       }
       if (block->r_flag || block->p_flag)
@@ -3295,7 +3295,7 @@ if ((block->m_modes[9] == 50)  && ONCE_M(9)){
 if ((block->m_modes[9] == 51)  && ONCE_M(9)){
 	int e = -1;
 	if (block->e_flag){
-		CHKS((block->e_number <= 0 || block->e_number > settings-> num_spindles),
+		CHKS((block->e_number <= 0 || block->e_number >= settings-> num_spindles),
 				(_("Invalid E-number in M51 command")));
 		e = block->e_number;
 	}
@@ -4491,7 +4491,7 @@ int Interp::convert_straight(int move,   //!< either G_0 or G_1
     settings->current_z = end_z;
   } else if (move == G_33) {
 	if (block->e_flag){
-		CHKS((block->e_number < 0 || block->e_number > settings->num_spindles -1),
+		CHKS((block->e_number < 0 || block->e_number >= settings->num_spindles),
 				(_("Invalid E-number in G33 move")));
 		settings->active_spindle = (int)block->e_number;
 	}
@@ -4506,7 +4506,7 @@ int Interp::convert_straight(int move,   //!< either G_0 or G_1
     settings->current_z = end_z;
   } else if (move == G_33_1) {
 	if (block->e_flag){
-		CHKS((block->e_number < 0 || block->e_number > settings->num_spindles -1),
+		CHKS((block->e_number < 0 || block->e_number >= settings->num_spindles),
 				(_("Invalid E-number in G33.1 move")));
 		settings->active_spindle = (int)block->e_number;
 	}
@@ -4519,7 +4519,7 @@ int Interp::convert_straight(int move,   //!< either G_0 or G_1
     // after the RIGID_TAP cycle we'll be in the same spot
   } else if (move == G_76) {
 	if (block->d_flag){ // D was the only letter left, every other command uses E
-		CHKS((block->d_number_float < 0 || block->d_number_float > settings->num_spindles - 1),
+		CHKS((block->d_number_float < 0 || block->d_number_float >= settings->num_spindles),
 				(_("Invalid D-number in G76 cycle")));
 		settings->active_spindle = (int)block->d_number_float;
 	}

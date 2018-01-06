@@ -246,7 +246,7 @@ int Interp::execute_block(block_pointer block,   //!< pointer to a block of RS27
   if ((block->g_modes[GM_SPINDLE_MODE] != -1) && ONCE(STEP_SPINDLE_MODE)) {
 	  settings->active_spindle = 0; //must be single-spindle, default to 0
 	  if (block->e_flag){
-		  CHKS((block->e_number < 0 || block->e_number > settings->num_spindles - 1),
+		  CHKS((block->e_number < 0 || block->e_number >= settings->num_spindles),
 				  (_("Invalid E-number in Spindle Mode command")));
 		  settings->active_spindle = (int)block->e_number;
 	  }
@@ -256,7 +256,7 @@ int Interp::execute_block(block_pointer block,   //!< pointer to a block of RS27
   if ((block->g_modes[GM_FEED_MODE] != -1) && ONCE(STEP_FEED_MODE)) {
 	  settings->active_spindle = 0; //must be single-spindle, default to 0
 	  if (block->e_flag){
-		  CHKS((block->e_number < 0 || block->e_number > settings->num_spindles - 1),
+		  CHKS((block->e_number < 0 || block->e_number >= settings->num_spindles),
 				  (_("Invalid E-number in Spindle Feed command")));
 		  settings->active_spindle = (int)block->e_number;
 	  }
@@ -280,7 +280,7 @@ int Interp::execute_block(block_pointer block,   //!< pointer to a block of RS27
     	  return (convert_remapped_code(block,settings,STEP_SET_SPINDLE_SPEED,'S'));
       } else {
     	  if (block->e_flag){
-    		  CHKS((block->e_number < 0 || block->e_number > settings->num_spindles - 1),
+    		  CHKS((block->e_number < 0 || block->e_number >= settings->num_spindles),
     				  (_("Invalid E-number in Spindle speed command")));
     		  settings->active_spindle = (int)block->e_number;
     	  }
