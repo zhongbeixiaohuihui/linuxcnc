@@ -60,7 +60,7 @@ name and end at the next section name.
 The following sections are used by LinuxCNC:
 
 * '[<<sec:emc-section,EMC>>]' general information
-* ' <<sec:display-section,DISPLAY>>]' settings related to the graphical user interface
+* '[<<sec:display-section,DISPLAY>>]' settings related to the graphical user interface
 * '[<<sec:filter-section,FILTER>>]' settings input filter programs
 * '[<<sec:rs274ngc-section,RS274NGC>>]' settings used by the g-code interpreter
 * '[<<sec:emcmot-section,EMCMOT>>]' settings used by the real time motion controller
@@ -366,6 +366,8 @@ Many of them are used also from gmoccapy, see the
 
 * 'LATHE = 1' - Any non-empty value (including "0") causes axis to use "lathe mode" with a top view and with Radius and Diameter on the DRO.
 
+* 'BACK_TOOL_LATHE = 1' - Any non-empty value (including "0") causes axis to use "back tool lathe mode" with inverted X axis.
+
 * 'FOAM = 1' - Any non-empty value (including "0") causes axis to change the display for foam-cutter mode.
 
 * 'GEOMETRY = XYZABCUVW' - Controls the preview and backplot of rotary motion. This item consists
@@ -595,6 +597,10 @@ Section.
 
 * 'TRAJ_PERIOD = 100000' - This is the 'Trajectory Planner' task period in
   nanoseconds.
+
+* 'COMM_TIMEOUT = 1.0' - Number of seconds to wait for Motion (the
+  realtime part of the motion controller) to acknowledge receipt of
+  messages from Task (the non-realtime part of the motion controller).
 
 [[sec:task-section]](((INI File, TASK Section)))
 
@@ -911,15 +917,18 @@ small, tight corners, since you're limited by cornering acceleration.
 
 * 'NO_FORCE_HOMING = 1' - The default behavior is for LinuxCNC to force the
    user to home the machine before any MDI command or a program is run.
-   Normally, only jogging is allowed before homing. Setting NO_FORCE_HOMING
-   = 1 allows the user to make MDI moves and run programs without homing the
-   machine first. Interfaces without homing ability will need to have this
+   Normally, only jogging is allowed before homing.  For configurations using
+   identity kinematics, setting NO_FORCE_HOMING = 1 allows the user to make
+   MDI moves and run programs without homing the machine first. Interfaces
+   using identity kinematics without homing ability will need to have this
    option set to 1.
 
 * 'HOME = 0 0 0 0 0 0 0 0 0' - World home position needed for kinematics modules
    that compute world coordinates using kinematicsForward() when switching
    from joint to teleop mode.  Up to nine coordinate values (X Y Z A B C U V W)
-   may be specified, unused trailing items may be omitted.
+   may be specified, unused trailing items may be omitted. This value is only
+   used for machines with nontrivial kinematics. On machines with trivial
+   kinematics (mill, lathe, gantry types) this value is ignored.
    Note: the sim hexapod config requires a non-zero value for the Z coordinate.
 
 [WARNING]

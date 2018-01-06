@@ -14,7 +14,7 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with this program; if not, write to the Free Software
-//    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+//    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 #include <Python.h>
 #include <structmember.h>
@@ -761,7 +761,12 @@ static PyObject *parse_file(PyObject *self, PyObject *args) {
         result = interp_new.execute();
     }
 out_error:
-    if(pinterp) pinterp->close();
+    if(pinterp)
+    {
+        auto interp = dynamic_cast<Interp*>(pinterp);
+        if(interp) interp->_setup.use_lazy_close = false;
+        pinterp->close();
+    }
     if(interp_error) {
         if(!PyErr_Occurred()) {
             PyErr_Format(PyExc_RuntimeError,

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 
 # Touchy is Copyright (c) 2009  Chris Radek <chris@timeguy.com>
@@ -142,7 +142,7 @@ class touchy:
                 if os.path.exists(themedir):
                     model = self.wTree.get_widget("theme_choice").get_model()
                     model.clear()
-                    model.append(("Follow System Theme",))
+                    model.append((_("Follow System Theme"),))
                     temp = 0
                     names = os.listdir(themedir)
                     names.sort()

@@ -15,7 +15,7 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
 # import pdb
@@ -132,6 +132,9 @@ try:
     root_window.tk.call("set","::STATE_ESTOP_RESET"  ,linuxcnc.STATE_ESTOP_RESET)
     root_window.tk.call("set","::STATE_OFF"          ,linuxcnc.STATE_OFF)
     root_window.tk.call("set","::STATE_ON"           ,linuxcnc.STATE_ON)
+    root_window.tk.call("set","::TASK_MODE_MANUAL"   ,linuxcnc.MODE_MANUAL)
+    root_window.tk.call("set","::TASK_MODE_MDI"      ,linuxcnc.MODE_MDI)
+    root_window.tk.call("set","::TASK_MODE_AUTO"     ,linuxcnc.MODE_AUTO)
     root_window.tk.call("set","::INTERP_IDLE"        ,linuxcnc.INTERP_IDLE)
     root_window.tk.call("set","::INTERP_READING"     ,linuxcnc.INTERP_READING)
     root_window.tk.call("set","::INTERP_PAUSED"      ,linuxcnc.INTERP_PAUSED)
@@ -144,8 +147,8 @@ except TclError:
     raise
 
 def General_Halt():
-    text = "Do you really want to close LinuxCNC?"
-    if not root_window.tk.call("nf_dialog", ".error", "Confirm Close", text, "warning", 1, "Yes", "No"):
+    text = _("Do you really want to close LinuxCNC?")
+    if not root_window.tk.call("nf_dialog", ".error", _("Confirm Close"), text, "warning", 1, _("Yes"), _("No")):
         root_window.destroy()
 
 root_window.protocol("WM_DELETE_WINDOW", General_Halt)
@@ -190,6 +193,7 @@ help1 = [
     (_("End"), _("Set G54 offset for active axis")),
     (_("Ctrl-End"), _("Set tool offset for loaded tool")),
     ("-, =", _("Jog active axis or joint")),
+    (";, '", _("Select Max velocity")),
 
     ("", ""),
     (_("Left, Right"), _("Jog first axis or joint")),
@@ -554,7 +558,8 @@ class MyOpengl(GlCanonDraw, Opengl):
         x,y,z,p = 0,1,2,3
         if str(widgets.view_x['relief']) == "sunken":
             view = x
-        elif str(widgets.view_y['relief']) == "sunken":
+        elif (str(widgets.view_y['relief']) == "sunken" or
+             str(widgets.view_y2['relief']) == "sunken"):
             view = y
         elif (str(widgets.view_z['relief']) == "sunken" or
               str(widgets.view_z2['relief']) == "sunken"):
@@ -1186,7 +1191,7 @@ def open_file_guts(f, filtered=False, addrecent=True):
                 # "g_mode" neither of which should be sent as a startup code.
                 # In particular, after issuing a non-modal G like G10, that
                 # will appear at s.gcodes[2] which caused issue #269
-                if i in (0, 2): continue
+                if i in (0, 1, 2): continue
                 if g == -1: continue
                 initcodes.append("G%.1f" % (g * .1))
             tool_offset = "G43.1"
@@ -1309,6 +1314,7 @@ widgets = nf.Widgets(root_window,
     ("view_z2", Button, ".toolbar.view_z2"),
     ("view_x", Button, ".toolbar.view_x"),
     ("view_y", Button, ".toolbar.view_y"),
+    ("view_y2", Button, ".toolbar.view_y2"),
     ("view_p", Button, ".toolbar.view_p"),
     ("rotate", Button, ".toolbar.rotate"),
 
@@ -1410,11 +1416,13 @@ def jogspeed_listbox_change(dummy, value):
     # pdb.set_trace()
     # FJ: curselection is not always up to date here, so 
     #     do a linear search by hand
-    iterator = iter(root_window.call(widgets.jogincr._w, "list", "get", "0", "end"))
+    iterator = root_window.call(widgets.jogincr._w, "list", "get", "0", "end")
     idx = 0
     cursel = -1
+    if isinstance(value, str): value = value.encode('utf-8', 'replace')
     for i in iterator:
-        if i == unicode(value, 'utf-8'):
+        if isinstance(i, str): i = i.encode('utf-8', 'replace')
+        if i == value:
             cursel= idx
             break
         idx += 1
@@ -2051,6 +2059,7 @@ class TclCommands(nf.TclCommands):
         widgets.view_z2.configure(relief="link")
         widgets.view_x.configure(relief="sunken")
         widgets.view_y.configure(relief="link")
+        widgets.view_y2.configure(relief="link")
         widgets.view_p.configure(relief="link")
         vars.view_type.set(3)
         o.set_view_x()
@@ -2060,15 +2069,27 @@ class TclCommands(nf.TclCommands):
         widgets.view_z2.configure(relief="link")
         widgets.view_x.configure(relief="link")
         widgets.view_y.configure(relief="sunken")
+        widgets.view_y2.configure(relief="link")
         widgets.view_p.configure(relief="link")
         vars.view_type.set(4)
         o.set_view_y()
+
+    def set_view_y2(event=None):
+        widgets.view_z.configure(relief="link")
+        widgets.view_z2.configure(relief="link")
+        widgets.view_x.configure(relief="link")
+        widgets.view_y.configure(relief="link")
+        widgets.view_y2.configure(relief="sunken")
+        widgets.view_p.configure(relief="link")
+        vars.view_type.set(4)
+        o.set_view_y2()
 
     def set_view_z(event=None):
         widgets.view_z.configure(relief="sunken")
         widgets.view_z2.configure(relief="link")
         widgets.view_x.configure(relief="link")
         widgets.view_y.configure(relief="link")
+        widgets.view_y2.configure(relief="link")
         widgets.view_p.configure(relief="link")
         vars.view_type.set(1)
         o.set_view_z()
@@ -2078,6 +2099,7 @@ class TclCommands(nf.TclCommands):
         widgets.view_z2.configure(relief="sunken")
         widgets.view_x.configure(relief="link")
         widgets.view_y.configure(relief="link")
+        widgets.view_y2.configure(relief="link")
         widgets.view_p.configure(relief="link")
         vars.view_type.set(2)
         o.set_view_z2()
@@ -2088,6 +2110,7 @@ class TclCommands(nf.TclCommands):
         widgets.view_z2.configure(relief="link")
         widgets.view_x.configure(relief="link")
         widgets.view_y.configure(relief="link")
+        widgets.view_y2.configure(relief="link")
         widgets.view_p.configure(relief="sunken")
         vars.view_type.set(5)
         o.set_view_p()
@@ -3325,6 +3348,7 @@ vars.coord_type.set(inifile.find("DISPLAY", "POSITION_OFFSET") == "RELATIVE")
 vars.display_type.set(inifile.find("DISPLAY", "POSITION_FEEDBACK") == "COMMANDED")
 coordinate_display = inifile.find("DISPLAY", "POSITION_UNITS")
 lathe = bool(inifile.find("DISPLAY", "LATHE"))
+lathe_backtool = bool(inifile.find("DISPLAY", "BACK_TOOL_LATHE"))
 foam = bool(inifile.find("DISPLAY", "FOAM"))
 editor = inifile.find("DISPLAY", "EDITOR")
 vars.has_editor.set(editor is not None)
@@ -3377,27 +3401,27 @@ while ((s.joints == 0) or (s.kinematics_type < linuxcnc.KINEMATICS_IDENTITY)):
     s.poll()
 
 if s.kinematics_type == linuxcnc.KINEMATICS_IDENTITY:
-    ja_name = "Axes"
+    ja_name = _("Axes")
 else:
-    ja_name = "Joints"
+    ja_name = _("Joints")
 if homing_order_defined:
     widgets.homebutton.configure(text=_("Home All"), command="home_all_joints")
     root_window.tk.call("DynamicHelp::add", widgets.homebutton,
-            "-text", _("Home all %s [Ctrl-Home]" % ja_name))
+            "-text", _("Home all %s [Ctrl-Home]") % ja_name)
     widgets.homemenu.add_command(command=commands.home_all_joints)
     root_window.tk.call("setup_menu_accel", widgets.homemenu, "end",
-            _("Home All %s" % ja_name))
+            _("Home All %s") % ja_name)
 widgets.unhomemenu.add_command(command=commands.unhome_all_joints)
-root_window.tk.call("setup_menu_accel", widgets.unhomemenu, "end", _("Unhome All %s" % ja_name))
+root_window.tk.call("setup_menu_accel", widgets.unhomemenu, "end", _("Unhome All %s") % ja_name)
 
-kinsmodule=inifile.find("KINS", "KINEMATICS").lower()
+kinsmodule=inifile.find("KINS", "KINEMATICS")
 kins_is_trivkins = False
 if kinsmodule.split()[0] == "trivkins":
     kins_is_trivkins = True
     trivkinscoords = "XYZABCUVW"
     for item in kinsmodule.split():
         if "coordinates=" in item:
-            trivkinscoords = item.split("=")[1]
+            trivkinscoords = item.split("=")[1].upper()
 
 duplicate_coord_letters = ""
 for i in range(len(trajcoordinates)):
@@ -3460,7 +3484,7 @@ num_joints = s.joints
 gave_individual_homing_message = ""
 for jnum in range(num_joints):
     if s.kinematics_type == linuxcnc.KINEMATICS_IDENTITY:
-        ja_name = "Axis"
+        ja_name = _("Axis ")
         ja_id = aletter_for_jnum(jnum)
         if ja_id.lower() in duplicate_coord_letters:
             if ja_id not in gave_individual_homing_message:
@@ -3477,7 +3501,7 @@ for jnum in range(num_joints):
                command=lambda jnum=jnum: commands.home_joint_number(jnum))
         widgets.unhomemenu.add_command(
                command=lambda jnum=jnum: commands.unhome_joint_number(jnum))
-        ja_name = "Joint"
+        ja_name = _("Joint")
         if joint_sequence[jnum] is '':
             ja_id = "%d"%jnum
         elif (int(joint_sequence[jnum]) < 0):
@@ -3550,7 +3574,7 @@ def unique_axes(axes, order):
 
 jog_invert = inifile.find("DISPLAY", "JOG_INVERT")
 if jog_invert is None:
-    if lathe: jog_invert = "X"
+    if lathe and not lathe_backtool: jog_invert = "X"
     else: jog_invert = ""
 jog_invert = set(jog_invert.upper())
 
@@ -3795,7 +3819,10 @@ if os.path.exists(initialfile):
     open_file_guts(initialfile, False, addrecent)
 
 if lathe:
-    commands.set_view_y()
+    if lathe_backtool:
+        commands.set_view_y2()
+    else:
+        commands.set_view_y()
 else:
     commands.set_view_p()
 if o.canon:
@@ -3908,17 +3935,22 @@ else:
 
 
 if lathe:
-    root_window.after_idle(commands.set_view_y)
-    root_window.bind("v", commands.set_view_y)
+    if lathe_backtool:
+        root_window.after_idle(commands.set_view_y2)
+        root_window.bind("v", commands.set_view_y2)
+    else:
+        root_window.after_idle(commands.set_view_y)
+        root_window.bind("v", commands.set_view_y)
     root_window.bind("d", "")
     widgets.view_z.pack_forget()
     widgets.view_z2.pack_forget()
     widgets.view_x.pack_forget()
-    widgets.view_y.pack_forget()
     widgets.view_p.pack_forget()
     widgets.rotate.pack_forget()
     widgets.axis_y.grid_forget()
     widgets.menu_view.delete(0, 5)
+else:
+    widgets.view_y2.pack_forget()
 
 widgets.feedoverride.set(100)
 commands.set_feedrate(100)

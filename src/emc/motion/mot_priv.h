@@ -115,6 +115,7 @@ typedef struct {
     hal_s32_t   *jjog_counts;	/* WPI: jogwheel position input */
     hal_bit_t   *jjog_enable;	/* RPI: enable jogwheel */
     hal_float_t *jjog_scale;	/* RPI: distance to jog on each count */
+    hal_float_t *jjog_accel_fraction;	/* RPI: to limit wheel jog accel */
     hal_bit_t   *jjog_vel_mode;	/* RPI: true for "velocity mode" jogwheel */
 
 } joint_hal_t;
@@ -129,6 +130,7 @@ typedef struct {
     hal_s32_t   *ajog_counts;	/* WPI: jogwheel position input */
     hal_bit_t   *ajog_enable;	/* RPI: enable jogwheel */
     hal_float_t *ajog_scale;	/* RPI: distance to jog on each count */
+    hal_float_t *ajog_accel_fraction;	/* RPI: to limit wheel jog accel */
     hal_bit_t   *ajog_vel_mode;	/* RPI: true for "velocity mode" jogwheel */
     hal_bit_t   *kb_ajog_active;   /* RPI: executing keyboard jog */
     hal_bit_t   *wheel_ajog_active;/* RPI: executing handwheel jog */
@@ -142,6 +144,7 @@ typedef struct {
     hal_float_t *adaptive_feed;	/* RPI: adaptive feedrate, 0.0 to 1.0 */
     hal_bit_t *feed_hold;	/* RPI: set TRUE to stop motion maskable with g53 P1*/
     hal_bit_t *feed_inhibit;	/* RPI: set TRUE to stop motion (non maskable)*/
+    hal_bit_t *homing_inhibit;	/* RPI: set TRUE to inhibit homing*/
     hal_bit_t *motion_enabled;	/* RPI: motion enable for all joints */
     hal_bit_t *in_position;	/* RPI: all joints are in position */
     hal_bit_t *coord_mode;	/* RPA: TRUE if coord, FALSE if free */
@@ -267,6 +270,9 @@ extern void clearHomes(int joint_num);
 
 extern void emcmot_config_change(void);
 extern void reportError(const char *fmt, ...) __attribute((format(printf,1,2))); /* Use the rtapi_print call */
+
+int joint_is_lockable(int joint_num);
+
 
  /* rtapi_get_time() returns a nanosecond value. In time, we should use a u64
     value for all calcs and only do the conversion to seconds when it is

@@ -14,12 +14,13 @@
  *
  *    You should have received a copy of the GNU General Public License
  *    along with this program; if not, write to the Free Software
- *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 // Interpreter internals - Python bindings
 // Michael Haberler 7/2011
 //
 
+#define BOOST_PYTHON_MAX_ARITY 4
 #include <boost/python/class.hpp>
 #include <boost/python/def.hpp>
 #include <boost/python/exception_translator.hpp>
@@ -81,14 +82,13 @@ static  sub_context_array sub_context_wrapper ( Interp & inst) {
 }
 
 
-#pragma GCC diagnostic ignored "-Wformat-security"
 static void setErrorMsg(Interp &interp, const char *s)
 {
     setup *settings  = &interp._setup;
 
     if ((s == NULL) || (strlen(s) == 0))
 	s = "###";
-    interp.setError (s);
+    interp.setError ("%s", s);
     settings->stack_index = 0;
     strncpy(settings->stack[settings->stack_index],
 	    "Python", STACK_ENTRY_LEN);
@@ -96,8 +96,6 @@ static void setErrorMsg(Interp &interp, const char *s)
     settings->stack_index++;
     settings->stack[settings->stack_index][0] = 0;
 }
-
-#pragma GCC diagnostic warning "-Wformat-security"
 
 static bp::object errorStack(Interp &interp)
 {

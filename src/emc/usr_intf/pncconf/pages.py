@@ -18,7 +18,7 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
 # This presents and collects the data from the GUI pages
 #
@@ -412,10 +412,10 @@ class Pages:
         self.w.editor.set_text(self.d.editor)
         if self.d.units == self._p._IMPERIAL :
             temp = self.d.increments_imperial
-            tempunits = "in / min"
+            tempunits = _("in / min")
         else:
             temp = self.d.increments_metric
-            tempunits = "mm / min"
+            tempunits = _("mm / min")
         self.w.increments.set_text(temp)
         for i in (0,1,2):
             self.w["velunits"+str(i)].set_text(tempunits)

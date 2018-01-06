@@ -43,6 +43,11 @@ static int axis_mask = 0;
 
 #define MDI_MAX 64
 
+#pragma GCC diagnostic push
+#if defined(__GNUC__) && (__GNUC__ > 4)
+#pragma GCC diagnostic ignored "-Wignored-attributes"
+#endif
+
 #define HAL_FIELDS \
     FIELD(hal_bit_t,machine_on) /* pin for setting machine On */ \
     FIELD(hal_bit_t,machine_off) /* pin for setting machine Off */ \
@@ -188,15 +193,15 @@ static int axis_mask = 0;
 \
     FIELD(hal_bit_t,home_all) /* pin for homing all joints in sequence */ \
     FIELD(hal_bit_t,abort) /* pin for aborting */ \
-    ARRAY(hal_bit_t,mdi_commands,MDI_MAX)
+    ARRAY(hal_bit_t,mdi_commands,MDI_MAX) \
+\
+    FIELD(hal_float_t,units_per_mm) \
 
 struct PTR {
     template<class T>
     struct field { typedef T *type; };
 };
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
 template<class T> struct NATIVE {};
 template<> struct NATIVE<hal_bit_t> { typedef bool type; };
 template<> struct NATIVE<hal_s32_t> { typedef rtapi_s32 type; };
@@ -205,7 +210,6 @@ template<> struct NATIVE<hal_float_t> { typedef double type; };
 struct VALUE {
     template<class T> struct field { typedef typename NATIVE<T>::type type; };
 };
-#pragma GCC diagnostic pop
 
 template<class T>
 struct halui_str_base
@@ -219,6 +223,7 @@ HAL_FIELDS
 
 typedef halui_str_base<PTR> halui_str;
 typedef halui_str_base<VALUE> local_halui_str;
+#pragma GCC diagnostic pop
 
 static halui_str *halui_data;
 static local_halui_str old_halui_data;
@@ -580,6 +585,8 @@ int halui_hal_init(void)
 
     /* STEP 3a: export the out-pin(s) */
 
+    retval =  hal_pin_float_newf(HAL_OUT, &(halui_data->units_per_mm), comp_id, "halui.machine.units-per-mm");
+    if (retval < 0) return retval;
     retval = halui_export_pin_OUT_bit(&(halui_data->machine_is_on), "halui.machine.is-on");
     if (retval < 0) return retval;
     retval = halui_export_pin_OUT_bit(&(halui_data->estop_is_activated), "halui.estop.is-activated");
@@ -2302,14 +2309,19 @@ int main(int argc, char *argv[])
     signal(SIGTERM, quit);
 
     while (!done) {
-
-	check_hal_changes(); //if anything changed send NML messages
-
-	modify_hal_pins(); //if status changed modify HAL too
-	
-	esleep(0.02); //sleep for a while
-	
-	updateStatus();
+        static bool task_start_synced = 0;
+        if (!task_start_synced) {
+           // wait for task to establish nonzero linearUnits
+           if (emcStatus->motion.traj.linearUnits != 0) {
+              // set once at startup, no changes are expected:
+              *(halui_data->units_per_mm) = emcStatus->motion.traj.linearUnits;
+              task_start_synced = 1;
+           }
+        }
+        check_hal_changes(); //if anything changed send NML messages
+        modify_hal_pins(); //if status changed modify HAL too
+        esleep(0.02); //sleep for a while
+        updateStatus();
     }
     thisQuit();
     return 0;

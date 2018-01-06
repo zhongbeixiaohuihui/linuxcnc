@@ -12,7 +12,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
 #include "config.h"
@@ -44,9 +44,12 @@
 #endif
 #include <sys/resource.h>
 #include <sys/mman.h>
-#include <malloc.h>
 #ifdef __linux__
+#include <malloc.h>
 #include <sys/prctl.h>
+#endif
+#ifdef __FreeBSD__
+#include <pthread_np.h>
 #endif
 
 #include "config.h"
@@ -79,6 +82,9 @@ WithRoot::~WithRoot() {
 #endif
     }
 }
+
+extern "C"
+int rtapi_is_realtime();
 
 namespace
 {
@@ -698,7 +704,7 @@ static int harden_rt()
     if(!rtapi_is_realtime()) return -EINVAL;
 
     WITH_ROOT;
-#if defined(__x86_64__) || defined(__i386__)
+#if defined(__linux__) && (defined(__x86_64__) || defined(__i386__))
     if (iopl(3) < 0) {
         rtapi_print_msg(RTAPI_MSG_ERR,
                         "cannot gain I/O privileges - "
@@ -919,6 +925,7 @@ int Posix::task_delete(int id)
 static int find_rt_cpu_number() {
     if(getenv("RTAPI_CPU_NUMBER")) return atoi(getenv("RTAPI_CPU_NUMBER"));
 
+#ifdef __linux__
     cpu_set_t cpuset_orig;
     int r = sched_getaffinity(getpid(), sizeof(cpuset_orig), &cpuset_orig);
     if(r < 0)
@@ -926,7 +933,18 @@ static int find_rt_cpu_number() {
         return 0;
 
     cpu_set_t cpuset;
-    for(int i=0; i<CPU_SETSIZE; i++) CPU_SET(i, &cpuset);
+    CPU_ZERO(&cpuset);
+    long top_probe = sysconf(_SC_NPROCESSORS_CONF);
+    // in old glibc versions, it was an error to pass to sched_setaffinity bits
+    // that are higher than an imagined/probed kernel-side CPU mask size.
+    // this caused the message
+    //     sched_setaffinity: Invalid argument
+    // to be printed at startup, and the probed CPU would not take into
+    // account CPUs masked from this process by default (whether by
+    // isolcpus or taskset).  By only setting bits up to the "number of
+    // processes configured", the call is successful on glibc versions such as
+    // 2.19 and older.
+    for(long i=0; i<top_probe && i<CPU_SETSIZE; i++) CPU_SET(i, &cpuset);
 
     r = sched_setaffinity(getpid(), sizeof(cpuset), &cpuset);
     if(r < 0)
@@ -947,6 +965,9 @@ static int find_rt_cpu_number() {
         if(CPU_ISSET(i, &cpuset)) top = i;
     }
     return top;
+#else
+    return (-1);
+#endif
 }
 
 int Posix::task_start(int task_id, unsigned long int period_nsec)
@@ -977,11 +998,17 @@ int Posix::task_start(int task_id, unsigned long int period_nsec)
       return -errno;
   if(nprocs > 1) {
       const static int rt_cpu_number = find_rt_cpu_number();
-      cpu_set_t cpuset;
-      CPU_ZERO(&cpuset);
-      CPU_SET(rt_cpu_number, &cpuset);
-      if(pthread_attr_setaffinity_np(&attr, sizeof(cpuset), &cpuset) < 0)
-          return -errno;
+      if(rt_cpu_number != -1) {
+#ifdef __FreeBSD__
+          cpuset_t cpuset;
+#else
+          cpu_set_t cpuset;
+#endif
+          CPU_ZERO(&cpuset);
+          CPU_SET(rt_cpu_number, &cpuset);
+          if(pthread_attr_setaffinity_np(&attr, sizeof(cpuset), &cpuset) < 0)
+               return -errno;
+      }
   }
   if(pthread_create(&task->thr, &attr, &wrapper, reinterpret_cast<void*>(task)) < 0)
       return -errno;

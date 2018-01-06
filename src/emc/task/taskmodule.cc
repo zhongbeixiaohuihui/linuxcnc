@@ -14,10 +14,11 @@
  *
  *    You should have received a copy of the GNU General Public License
  *    along with this program; if not, write to the Free Software
- *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 // TODO: reuse interp converters
 
+#define BOOST_PYTHON_MAX_ARITY 7
 #include <boost/python/class.hpp>
 #include <boost/python/def.hpp>
 #include <boost/python/implicit.hpp>
@@ -329,6 +330,8 @@ BOOST_PYTHON_MODULE(emctask) {
 	.def_readonly("tooltable_filename", &Task::tooltable_filename)
 	;
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     class_ <EMC_TRAJ_STAT, noncopyable>("EMC_TRAJ_STAT",no_init)
 	.def_readwrite("linearUnits", &EMC_TRAJ_STAT::linearUnits )
 	.def_readwrite("angularUnits", &EMC_TRAJ_STAT::angularUnits )
@@ -363,7 +366,7 @@ BOOST_PYTHON_MODULE(emctask) {
 	.def_readwrite("adaptive_feed_enabled", &EMC_TRAJ_STAT::adaptive_feed_enabled )
 	.def_readwrite("feed_hold_enabled", &EMC_TRAJ_STAT::feed_hold_enabled )
 	;
-
+#pragma GCC diagnostic pop
     class_ <EMC_JOINT_STAT, noncopyable>("EMC_JOINT_STAT",no_init)
 	.def_readwrite("units", &EMC_JOINT_STAT::units)
 	.def_readwrite("backlash", &EMC_JOINT_STAT::backlash)

@@ -13,7 +13,7 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from rs274 import Translated, ArcsToSegmentsMixin, OpenGLTk
 from minigl import *
@@ -24,6 +24,7 @@ import linuxcnc
 import array
 import gcode
 import os
+import re
 
 def minmax(*args):
     return min(*args), max(*args)
@@ -1258,7 +1259,10 @@ class GlCanonDraw:
                 glPushMatrix()
                 glTranslatef(*pos)
                 sign = 1
-                for ch in self.get_geometry():
+                g = re.split(" *(-?[XYZABCUVW])", self.get_geometry())
+                g = "".join(reversed(g))
+
+                for ch in g: # Apply in orignal non-reversed GEOMETRY order
                     if ch == '-':
                         sign = -1
                     elif ch == 'A':
@@ -1270,6 +1274,8 @@ class GlCanonDraw:
                     elif ch == 'C':
                         glRotatef(rz*sign, 0, 0, 1)
                         sign = 1
+                    else:
+                        sign = 1 # reset sign for non-rotational axis "XYZUVW"
                 glEnable(GL_BLEND)
                 glEnable(GL_CULL_FACE)
                 glBlendFunc(GL_ONE, GL_CONSTANT_ALPHA)
@@ -1476,6 +1482,8 @@ class GlCanonDraw:
                 positions[0] = x * math.cos(t) - y * math.sin(t)
                 positions[1] = x * math.sin(t) + y * math.cos(t)
                 positions = [(i-j) for i, j in zip(positions, s.g92_offset)]
+            else:
+                positions = list(positions)
 
             if self.get_a_axis_wrapped():
                 positions[3] = math.fmod(positions[3], 360.0)
@@ -1707,7 +1715,7 @@ class GlCanonDraw:
         glDepthFunc(GL_ALWAYS)
         diameter, frontangle, backangle, orientation = current_tool[-4:]
         w = 3/8.
-
+        glDisable(GL_CULL_FACE)#lathe tool needs to be visable form both sides
         radius = self.to_internal_linear_unit(diameter) / 2.
         glColor3f(*self.colors['lathetool'])
         glBegin(GL_LINES)
@@ -1762,6 +1770,7 @@ class GlCanonDraw:
                 radius * dy + radius * math.cos(circlemaxangle) + sz * cosmax)
 
             glEnd()
+        glEnable(GL_CULL_FACE)
         glDepthFunc(GL_LESS)
 
     def extents_info(self):
