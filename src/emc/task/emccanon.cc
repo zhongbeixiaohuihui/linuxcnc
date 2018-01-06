@@ -1797,17 +1797,17 @@ void START_SPINDLE_CLOCKWISE(int s, int wait_for_atspeed)
             emcStatus->motion.spindle[s].css_factor = 12 / (2 * M_PI) * emcStatus->motion.spindle[s].speed * TO_EXT_LEN(25.4);
         } else {
             emcStatus->motion.spindle[s].css_factor = 1000 / (2 * M_PI) * emcStatus->motion.spindle[s].speed * TO_EXT_LEN(1);
-            emc_spindle_on_msg.speed = emcStatus->motion.spindle[s].direction * emcStatus->motion.spindle[s].css_maximum;
-            emc_spindle_on_msg.factor = emcStatus->motion.spindle[s].direction * emcStatus->motion.spindle[s].css_factor;
-        }
-            emc_spindle_on_msg.xoffset = TO_EXT_LEN(canon.g5xOffset.x + canon.g92Offset.x + canon.toolOffset.tran.x);
+		}
+		emc_spindle_on_msg.speed = emcStatus->motion.spindle[s].direction * emcStatus->motion.spindle[s].css_maximum;
+		emc_spindle_on_msg.factor = emcStatus->motion.spindle[s].direction * emcStatus->motion.spindle[s].css_factor;
+		emc_spindle_on_msg.xoffset = TO_EXT_LEN(canon.g5xOffset.x + canon.g92Offset.x + canon.toolOffset.tran.x);
     } else {
         emc_spindle_on_msg.speed = emcStatus->motion.spindle[s].direction * emcStatus->motion.spindle[s].speed;
      //   canon.css_numerator = 0; FIXME: Do we need this?
     }
     emc_spindle_on_msg.wait_for_spindle_at_speed = wait_for_atspeed;
     interp_list.append(emc_spindle_on_msg);
-    printf("emcannon START_SPINDLE_CW_spindle %d speed %f, direction %i\n", emc_spindle_on_msg.spindle, emc_spindle_on_msg.speed, emcStatus->motion.spindle[s].direction);
+    printf("emcannon START_SPINDLE_CW_spindle %d speed %f, direction %i, .speed %f\n", emc_spindle_on_msg.spindle, emc_spindle_on_msg.speed, emcStatus->motion.spindle[s].direction, emcStatus->motion.spindle[s].speed);
 }
 
 void START_SPINDLE_COUNTERCLOCKWISE(int s, int wait_for_atspeed)
@@ -1822,16 +1822,17 @@ void START_SPINDLE_COUNTERCLOCKWISE(int s, int wait_for_atspeed)
             emcStatus->motion.spindle[s].css_factor = 12 / (2 * M_PI) * emcStatus->motion.spindle[s].speed * TO_EXT_LEN(25.4);
         } else {
             emcStatus->motion.spindle[s].css_factor = 1000 / (2 * M_PI) * emcStatus->motion.spindle[s].speed * TO_EXT_LEN(1);
-            emc_spindle_on_msg.speed = emcStatus->motion.spindle[s].direction * emcStatus->motion.spindle[s].css_maximum;
-            emc_spindle_on_msg.factor = emcStatus->motion.spindle[s].direction * emcStatus->motion.spindle[s].css_factor;
-        }
-            emc_spindle_on_msg.xoffset = TO_EXT_LEN(canon.g5xOffset.x + canon.g92Offset.x + canon.toolOffset.tran.x);
+		}
+		emc_spindle_on_msg.speed = emcStatus->motion.spindle[s].direction * emcStatus->motion.spindle[s].css_maximum;
+		emc_spindle_on_msg.factor = emcStatus->motion.spindle[s].direction * emcStatus->motion.spindle[s].css_factor;
+		emc_spindle_on_msg.xoffset = TO_EXT_LEN(canon.g5xOffset.x + canon.g92Offset.x + canon.toolOffset.tran.x);
     } else {
         emc_spindle_on_msg.speed = emcStatus->motion.spindle[s].direction * emcStatus->motion.spindle[s].speed;
      //   canon.css_numerator = 0; FIXME: Do we need this?
     }
     emc_spindle_on_msg.wait_for_spindle_at_speed = wait_for_atspeed;
     interp_list.append(emc_spindle_on_msg);
+    printf("emcannon START_SPINDLE_ACW_spindle %d speed %f, direction %i .speed %f\n", emc_spindle_on_msg.spindle, emc_spindle_on_msg.speed, emcStatus->motion.spindle[s].direction, emcStatus->motion.spindle[s].speed);
 }
 
 void SET_SPINDLE_SPEED(int s, double r)
@@ -1845,19 +1846,20 @@ void SET_SPINDLE_SPEED(int s, double r)
 
     emc_spindle_speed_msg.spindle = s;
     if(emcStatus->motion.spindle[s].css_maximum) {
-	if(canon.lengthUnits == CANON_UNITS_INCHES) 
-	    emcStatus->motion.spindle[s].css_factor = 12 / (2 * M_PI) * emcStatus->motion.spindle[s].speed * TO_EXT_LEN(25.4);
-	else
-	    emcStatus->motion.spindle[s].css_factor = 1000 / (2 * M_PI) * emcStatus->motion.spindle[s].speed * TO_EXT_LEN(1);
-	emc_spindle_speed_msg.speed =  emcStatus->motion.spindle[s].direction *  emcStatus->motion.spindle[s].css_maximum;
-	emc_spindle_speed_msg.factor =  emcStatus->motion.spindle[s].direction *  emcStatus->motion.spindle[s].css_factor;
-	emc_spindle_speed_msg.xoffset = TO_EXT_LEN(canon.g5xOffset.x + canon.g92Offset.x + canon.toolOffset.tran.x);
-    } else {
-	emc_spindle_speed_msg.speed = emcStatus->motion.spindle[s].direction * emcStatus->motion.spindle[s].speed;
-    //   canon.css_numerator = 0; FIXME: Do we need this?
+		if(canon.lengthUnits == CANON_UNITS_INCHES){
+			emcStatus->motion.spindle[s].css_factor = 12 / (2 * M_PI) * emcStatus->motion.spindle[s].speed * TO_EXT_LEN(25.4);
+		} else {
+			emcStatus->motion.spindle[s].css_factor = 1000 / (2 * M_PI) * emcStatus->motion.spindle[s].speed * TO_EXT_LEN(1);
+		}
+		emc_spindle_speed_msg.speed =  emcStatus->motion.spindle[s].direction *  emcStatus->motion.spindle[s].css_maximum;
+		emc_spindle_speed_msg.factor =  emcStatus->motion.spindle[s].direction *  emcStatus->motion.spindle[s].css_factor;
+		emc_spindle_speed_msg.xoffset = TO_EXT_LEN(canon.g5xOffset.x + canon.g92Offset.x + canon.toolOffset.tran.x);
+	} else {
+		emc_spindle_speed_msg.speed = emcStatus->motion.spindle[s].direction * emcStatus->motion.spindle[s].speed;
+		//   canon.css_numerator = 0; FIXME: Do we need this?
     }
     interp_list.append(emc_spindle_speed_msg);
-    
+    printf("emcannon SET_SPINDLE_SPEED_spindle %d speed %f r = %f .speed = %f\n", emc_spindle_speed_msg.spindle, emc_spindle_speed_msg.speed, r, emcStatus->motion.spindle[s].speed );
 }
 
 void STOP_SPINDLE_TURNING(int s)
@@ -1867,6 +1869,8 @@ void STOP_SPINDLE_TURNING(int s)
     flush_segments();
     emc_spindle_off_msg.spindle = s;
     interp_list.append(emc_spindle_off_msg);
+    // Added by atp 6/1/18 not sure this is right. There is a problem that the _sesond_ S word starts the spindle without M3/M4
+    emcStatus->motion.spindle[s].direction = 0;
 }
 
 void SPINDLE_RETRACT()

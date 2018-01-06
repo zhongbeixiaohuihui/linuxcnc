@@ -3146,7 +3146,7 @@ int Interp::convert_m(block_pointer block,       //!< pointer to a block of RS27
  } else if ((block->m_modes[7] == 3)  && ONCE_M(7)) {
      if (block->e_flag){
         CHKS((block->e_number >= settings->num_spindles || block->e_number < 0),
-            (_("E-word out of range in M3 Command")));
+            (_("E-word out of range in M3 Command\nnum_spindles =%i. e_number=%d\n")),settings->num_spindles,block->e_number);
         enqueue_START_SPINDLE_CLOCKWISE(block->e_number);
         settings->spindle_turning[(int)block->e_number] = CANON_CLOCKWISE;
      } else {

@@ -216,9 +216,9 @@ int rtapi_app_main(void)
 	return -1;
     }
 
-    if (( num_spindles < 0 ) || ( num_joints > EMCMOT_MAX_SPINDLES )) {
+    if (( num_spindles < 0 ) || ( num_spindles > EMCMOT_MAX_SPINDLES )) {
 	rtapi_print_msg(RTAPI_MSG_ERR,
-	    _("MOTION: num_joints is %d, must be between 0 and %d\n"), num_spindles, EMCMOT_MAX_SPINDLES);
+	    _("MOTION: num_spindles is %d, must be between 0 and %d\n"), num_spindles, EMCMOT_MAX_SPINDLES);
 	hal_exit(mot_comp_id);
 	return -1;
     }
