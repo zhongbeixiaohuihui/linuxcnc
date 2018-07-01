@@ -37,9 +37,23 @@ variable unsigned *AD5754_2C;
 variable unsigned *AD5754_2D;
 variable unsigned *CPLD_write;
 variable unsigned *CPLD_read;
-variable unsigned *AD7329_write[8];
-variable unsigned *AD7329_read[8];
-
+variable unsigned *AD7329_write0;
+variable unsigned *AD7329_write1;
+variable unsigned *AD7329_write2;
+variable unsigned *AD7329_write3;
+variable unsigned *AD7329_write4;
+variable unsigned *AD7329_write5;
+variable unsigned *AD7329_write6;
+variable unsigned *AD7329_write7;
+variable unsigned *AD7329_read0;
+variable unsigned *AD7329_read1;
+variable unsigned *AD7329_read2;
+variable unsigned *AD7329_read3;
+variable unsigned *AD7329_read4;
+variable unsigned *AD7329_read5;
+variable unsigned *AD7329_read6;
+variable unsigned *AD7329_read7;
+ 
 license "GPL";
 author "Andy Pugh / Cliff Blackburn";
 
@@ -63,14 +77,14 @@ static int read(void *subdata) {
                | (enable_out(1) != 0) << 1 | (enable_out(0) != 0);
 
     // Read Analog to Digital
-    *AD7329_write[0] = 0x00000000;
-    *AD7329_write[1] = 0x00000000;
-    *AD7329_write[2] = 0x00000000;
-    *AD7329_write[3] = 0x00000000;
-    *AD7329_write[4] = 0x00000000;
-    *AD7329_write[5] = 0x00000000;
-    *AD7329_write[6] = 0x00000000;
-    *AD7329_write[7] = 0x00009C18; // Reset Sequencer to 0.. jic
+    *AD7329_write0 = 0x00000000;
+    *AD7329_write1 = 0x00000000;
+    *AD7329_write2 = 0x00000000;
+    *AD7329_write3 = 0x00000000;
+    *AD7329_write4 = 0x00000000;
+    *AD7329_write5 = 0x00000000;
+    *AD7329_write6 = 0x00000000;
+    *AD7329_write7 = 0x00009C18; // Reset Sequencer to 0.. jic
 
     // Limit DAC Outputs
     for (i = 0 ; i < 8 ; i++) {
@@ -151,9 +165,14 @@ static int read(void *subdata) {
     watchdog_has_bit = (*CPLD_read & 0x100) ? 1:0;
 
     // Read ADC's into Pins
-    for(i=0; i < 8; i++) {
-        analogue_in(i) = (double)((int16_t)((*AD7329_read[i] & 0x1FFF) << 3)) / 3276.8;
-    }
+    analogue_in(0) = (double)((int16_t)((*AD7329_read0 & 0x1FFF) << 3)) / 3276.8;
+    analogue_in(1) = (double)((int16_t)((*AD7329_read1 & 0x1FFF) << 3)) / 3276.8;
+    analogue_in(2) = (double)((int16_t)((*AD7329_read2 & 0x1FFF) << 3)) / 3276.8;
+    analogue_in(3) = (double)((int16_t)((*AD7329_read3 & 0x1FFF) << 3)) / 3276.8;
+    analogue_in(4) = (double)((int16_t)((*AD7329_read4 & 0x1FFF) << 3)) / 3276.8;
+    analogue_in(5) = (double)((int16_t)((*AD7329_read5 & 0x1FFF) << 3)) / 3276.8;
+    analogue_in(6) = (double)((int16_t)((*AD7329_read6 & 0x1FFF) << 3)) / 3276.8;
+    analogue_in(7) = (double)((int16_t)((*AD7329_read7 & 0x1FFF) << 3)) / 3276.8;
     return 0;
 }
 
@@ -202,16 +221,19 @@ EXTRA_SETUP(){
     if (r < 0) {
         HM2_ERR_NO_LL("There have been %i errors during ADC setup, "
                       "quitting\n", -r);
-        return -EINVAL;
+        return -EINVAL; 
     }
     // Add BSPI Frames
-    r += hm2_tram_add_bspi_frame(name, 4, &CPLD_write,
-                            &CPLD_read);
+    r += hm2_tram_add_bspi_frame(name, 4, &CPLD_write, &CPLD_read);
 
-    for(i = 0; i < 8; i++) {
-        r += hm2_tram_add_bspi_frame(name, 3, &AD7329_write[i],
-                                &AD7329_read[i]);
-    }
+    r += hm2_tram_add_bspi_frame(name, 3, &AD7329_write0, &AD7329_read0);
+    r += hm2_tram_add_bspi_frame(name, 3, &AD7329_write1, &AD7329_read1);
+    r += hm2_tram_add_bspi_frame(name, 3, &AD7329_write2, &AD7329_read2);
+    r += hm2_tram_add_bspi_frame(name, 3, &AD7329_write3, &AD7329_read3);
+    r += hm2_tram_add_bspi_frame(name, 3, &AD7329_write4, &AD7329_read4);
+    r += hm2_tram_add_bspi_frame(name, 3, &AD7329_write5, &AD7329_read5);
+    r += hm2_tram_add_bspi_frame(name, 3, &AD7329_write6, &AD7329_read6);
+    r += hm2_tram_add_bspi_frame(name, 3, &AD7329_write7, &AD7329_read7);
 
     r += hm2_tram_add_bspi_frame(name, 1, &AD5754_1A,0);
     r += hm2_tram_add_bspi_frame(name, 1, &AD5754_1B,0);
