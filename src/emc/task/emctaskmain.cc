@@ -570,9 +570,10 @@ interpret_again:
 			    // throw the results away if we're supposed to
 			    // read
 			    // through it
-			    if ((programStartLine < 0 ||
-				 emcStatus->task.readLine < programStartLine) &&
-				emcTaskPlanLevel() == 0) {
+			    if ( programStartLine != 0 &&
+				 emcTaskPlanLevel() == 0 &&
+				 ( programStartLine < 0 ||
+				   emcTaskPlanLine() <= programStartLine )) {
 				// we're stepping over lines, so check them
 				// for
 				// limits, etc. and clear then out
@@ -2177,7 +2178,7 @@ static int emcTaskIssueCommand(NMLmsg * cmd)
 	if (execute_msg->command[0] != 0) {
 	    char * command = execute_msg->command;
 	    if (command[0] == (char) 0xff) {
-		// Empty command recieved. Consider it is NULL
+		// Empty command received. Consider it is NULL
 		command = NULL;
 	    } else {
 		// record initial MDI command
@@ -2685,7 +2686,7 @@ static int emcTaskExecute(void)
 	    emcStatus->task.execState = EMC_TASK_EXEC_DONE;
 	    emcStatus->task.delayLeft = 0;
 	    if (emcStatus->task.input_timeout != 0)
-		emcStatus->task.input_timeout = 1; // timeout occured
+		emcStatus->task.input_timeout = 1; // timeout occurred
 	    emcTaskEager = 1;
 	}
 	// delay can be also be because we wait for an input
@@ -2997,6 +2998,11 @@ static int emctask_startup()
     } while (end > 0.0);
     if (!good) {
 	rcs_print_error("can't initialize motion\n");
+	return -1;
+    }
+
+    if (setup_inihal() != 0) {
+	rcs_print_error("%s: failed to setup inihal\n", __FUNCTION__);
 	return -1;
     }
 

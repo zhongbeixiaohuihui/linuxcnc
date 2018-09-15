@@ -527,6 +527,7 @@ Suggestion: Split this in to an Error and a Status flag register..
 	double coarse_pos;	/* trajectory point, before interp */
 	double pos_cmd;		/* commanded joint position */
 	double vel_cmd;		/* comanded joint velocity */
+	double acc_cmd;		/* comanded joint acceleration */
 	double backlash_corr;	/* correction for backlash */
 	double backlash_filt;	/* filtered backlash correction */
 	double backlash_vel;	/* backlash velocity variable */
@@ -574,6 +575,7 @@ Suggestion: Split this in to an Error and a Status flag register..
 	double pos_cmd;		/* commanded joint position */
 	double pos_fb;		/* position feedback, comp removed */
 	double vel_cmd;         /* current velocity */
+	double acc_cmd;         /* current acceleration */
 	double ferror;		/* following error */
 	double ferror_high_mark;	/* max following error */
 

@@ -1164,6 +1164,10 @@ static void get_pos_cmds(long period)
             /* copy free TP output to pos_cmd and coarse_pos */
             joint->pos_cmd = joint->free_tp.curr_pos;
             joint->vel_cmd = joint->free_tp.curr_vel;
+            //no acceleration output form simple_tp, but the pin will
+            //still show the acceleration from the interpolation.
+            //its delayed, but thats ok during jogging or homing.
+            joint->acc_cmd = 0.0;
             joint->coarse_pos = joint->free_tp.curr_pos;
             /* update joint status flag and overall status flag */
             if ( joint->free_tp.active ) {
@@ -1290,7 +1294,7 @@ static void get_pos_cmds(long period)
 	    /* point to joint struct */
 	    joint = &joints[joint_num];
         /* interpolate to get new position and velocity */
-	    joint->pos_cmd = cubicInterpolate(&(joint->cubic), 0, &(joint->vel_cmd), 0, 0);
+	    joint->pos_cmd = cubicInterpolate(&(joint->cubic), 0, &(joint->vel_cmd), &(joint->acc_cmd), 0);
 	}
 	/* report motion status */
 	SET_MOTION_INPOS_FLAG(0);
@@ -1350,7 +1354,7 @@ static void get_pos_cmds(long period)
 		       this cycle so it doesn't really matter */
 		cubicAddPoint(&(joint->cubic), joint->coarse_pos);
         /* interpolate to get new position and velocity */
-	    joint->pos_cmd = cubicInterpolate(&(joint->cubic), 0, &(joint->vel_cmd), 0, 0);
+	    joint->pos_cmd = cubicInterpolate(&(joint->cubic), 0, &(joint->vel_cmd), &(joint->acc_cmd), 0);
 	    }
 	}
 	else
@@ -1377,8 +1381,9 @@ static void get_pos_cmds(long period)
 	    joint = &joints[joint_num];
 	    /* save old command */
 	    joint->pos_cmd = joint->pos_fb;
-	    /* set joint velocity to zero */
+	    /* set joint velocity and acceleration to zero */
 	    joint->vel_cmd = 0.0;
+	    joint->acc_cmd = 0.0;
 	}
 	
 	break;
@@ -1888,6 +1893,7 @@ static void output_to_hal(void)
 	*(joint_data->homing) = GET_JOINT_HOMING_FLAG(joint);
 	*(joint_data->coarse_pos_cmd) = joint->coarse_pos;
 	*(joint_data->joint_vel_cmd) = joint->vel_cmd;
+	*(joint_data->joint_acc_cmd) = joint->acc_cmd;
 	*(joint_data->backlash_corr) = joint->backlash_corr;
 	*(joint_data->backlash_filt) = joint->backlash_filt;
 	*(joint_data->backlash_vel) = joint->backlash_vel;
@@ -1975,6 +1981,7 @@ static void update_status(void)
 	joint_status->pos_cmd = joint->pos_cmd;
 	joint_status->pos_fb = joint->pos_fb;
 	joint_status->vel_cmd = joint->vel_cmd;
+	joint_status->acc_cmd = joint->acc_cmd;
 	joint_status->ferror = joint->ferror;
 	joint_status->ferror_high_mark = joint->ferror_high_mark;
 	joint_status->backlash = joint->backlash;
