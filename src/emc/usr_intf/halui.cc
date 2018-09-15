@@ -1463,6 +1463,12 @@ static int iniLoad(const char *filename)
         }
     }
 
+    if (NULL != (inistring = inifile.Find("SPINDLES", "TRAJ"))) {
+        if (1 == sscanf(inistring, "%d", &i) && i > 0) {
+            num_spindles =  i;
+        }
+    }
+
     if (NULL != inifile.Find("HOME_SEQUENCE", "JOINT_0")) {
         have_home_all = 1;
     }
@@ -1506,6 +1512,7 @@ static void hal_init_pins()
 {
     int joint;
     int axis_num;
+    int spindle;
 
     *(halui_data->machine_on) = old_halui_data.machine_on = 0;
     *(halui_data->machine_off) = old_halui_data.machine_off = 0;
@@ -1558,8 +1565,12 @@ static void hal_init_pins()
 
     *(halui_data->fo_scale) = old_halui_data.fo_scale = 0.1; //sane default
     *(halui_data->ro_scale) = old_halui_data.ro_scale = 0.1; //sane default
-    for (int spindle = 0; spindle < num_spindles; spindle++){
-    	*(halui_data->so_scale[spindle]) = old_halui_data.so_scale[spindle] = 0.1; //sane default
+    for (spindle = 0; spindle < num_spindles; spindle++){
+        *(halui_data->so_scale[spindle]) = old_halui_data.so_scale[spindle] = 0.1; //sane default
+        *(halui_data->so_increase[spindle]) = old_halui_data.so_increase[spindle] = 0;
+        *(halui_data->so_decrease[spindle]) = old_halui_data.so_decrease[spindle] = 0;
+        *(halui_data->spindle_increase[spindle]) = old_halui_data.spindle_increase[spindle] = 0;
+        *(halui_data->spindle_decrease[spindle]) = old_halui_data.spindle_decrease[spindle] = 0;
     }
 }
 
@@ -1770,13 +1781,13 @@ static void check_hal_changes()
     if (check_bit_changed(new_halui_data.ro_decrease, old_halui_data.ro_decrease) != 0)
         sendRapidOverride(new_halui_data.ro_value - new_halui_data.ro_scale);
 
+	// spindle stuff
     for (int spindle = 0; spindle < num_spindles; spindle++){
 		if (check_bit_changed(new_halui_data.so_increase[spindle], old_halui_data.so_increase[spindle]) != 0)
 			sendSpindleOverride(spindle, new_halui_data.so_value[spindle] + new_halui_data.so_scale[spindle]);
 		if (check_bit_changed(new_halui_data.so_decrease[spindle], old_halui_data.so_decrease[spindle]) != 0)
 			sendSpindleOverride(spindle, new_halui_data.so_value[spindle] - new_halui_data.so_scale[spindle]);
 
-	//spindle stuff
 		if (check_bit_changed(new_halui_data.spindle_start[spindle], old_halui_data.spindle_start[spindle]) != 0)
 		sendSpindleForward(spindle);
 
@@ -1789,7 +1800,7 @@ static void check_hal_changes()
 		if (check_bit_changed(new_halui_data.spindle_reverse[spindle], old_halui_data.spindle_reverse[spindle]) != 0)
 		sendSpindleReverse(spindle);
 
-		bit = new_halui_data.spindle_increase;
+		bit = new_halui_data.spindle_increase[spindle];
 		if (bit != old_halui_data.spindle_increase[spindle]) {
 		if (bit != 0)
 			sendSpindleIncrease(spindle);
@@ -1798,7 +1809,7 @@ static void check_hal_changes()
 		old_halui_data.spindle_increase[spindle]= bit;
 		}
 
-		bit = new_halui_data.spindle_decrease;
+		bit = new_halui_data.spindle_decrease[spindle];
 		if (bit != old_halui_data.spindle_decrease[spindle]) {
 		if (bit != 0)
 			sendSpindleDecrease(spindle);
