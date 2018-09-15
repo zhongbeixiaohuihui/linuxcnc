@@ -254,14 +254,18 @@ int Interp::check_other_codes(block_pointer block)       //!< pointer to a block
   if (block->d_flag) {
     CHKS(((block->g_modes[GM_CUTTER_COMP] != G_41) && (block->g_modes[GM_CUTTER_COMP] != G_42) &&
         (block->g_modes[GM_CUTTER_COMP] != G_41_1) && (block->g_modes[GM_CUTTER_COMP] != G_42_1) &&
-	(block->g_modes[GM_SPINDLE_MODE] != G_96)),
+    (motion != G_76) && (block->g_modes[GM_SPINDLE_MODE] != G_96)),
         _("D word with no G41, G41.1, G42, G42.1, or G96 to use it"));
   }
 
   if (block->e_flag) {
-    CHKS(((motion != G_76) && (block->m_modes[5] != 66) && 
-      (block->m_modes[5] != 67) && (block->m_modes[5] != 68)),
-       _("E word with no G76, M66, M67 or M68 to use it"));
+    CHKS(((motion != G_76) && (motion != G_33) && (motion != G_33_1) &&
+      (block->m_modes[9] != 51) &&  (block->m_modes[5] != 66) &&
+      (block->m_modes[5] != 67) && (block->m_modes[5] != 68) &&
+      (block->m_modes[7] != 3) && (block->m_modes[7] != 4) &&
+      (block->m_modes[7] != 5) && (block->m_modes[7] != 19) &&
+      (! block->s_flag)),
+       _("E word with no G76, M3, M4, M5, M19, M51, M66, M67 or M68 to use it"));
   }
 
   if (block->h_flag) {
