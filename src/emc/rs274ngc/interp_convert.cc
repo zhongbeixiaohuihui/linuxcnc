@@ -4158,7 +4158,7 @@ int Interp::convert_spindle_mode(int e_number, block_pointer block, setup_pointe
 Returned Value: int
    When an m2 or m30 (program_end) is encountered, this returns INTERP_EXIT.
    If the code is not m0, m1, m2, m30, or m60, this returns
-   NCE_BUG_CODE_NOT_M0_M1_M2_M30_M60
+   NCE_BUG_CODE_NOT_M0_M1_M2_M30_M60_M99
    Otherwise, it returns INTERP_OK.
 
 Side effects:
@@ -4360,7 +4360,7 @@ int Interp::convert_stop(block_pointer block,    //!< pointer to a block of RS27
     unwind_call(INTERP_EXIT, __FILE__,__LINE__,__FUNCTION__);
     return INTERP_EXIT;
   } else
-    ERS(NCE_BUG_CODE_NOT_M0_M1_M2_M30_M60);
+    ERS(NCE_BUG_CODE_NOT_M0_M1_M2_M30_M60_M99);
   return INTERP_OK;
 }
 
