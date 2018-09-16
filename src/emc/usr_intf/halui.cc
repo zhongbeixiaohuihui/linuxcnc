@@ -2196,7 +2196,7 @@ static void modify_hal_pins()
     }
 
     for (spindle = 0; spindle < num_spindles; spindle++){
-		*(halui_data->spindle_is_on[spindle]) = (emcStatus->motion.spindle[spindle].speed != 0);
+		*(halui_data->spindle_is_on[spindle]) = (emcStatus->motion.spindle[spindle].enabled);
 		*(halui_data->spindle_runs_forward[spindle]) = (emcStatus->motion.spindle[spindle].direction == 1);
 		*(halui_data->spindle_runs_backward[spindle]) = (emcStatus->motion.spindle[spindle].direction == -1);
 		*(halui_data->spindle_brake_is_on[spindle]) = emcStatus->motion.spindle[spindle].brake;
