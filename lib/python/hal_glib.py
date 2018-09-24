@@ -186,7 +186,7 @@ class _GStat(gobject.GObject):
         self.old['homed'] = self.stat.homed
         self.old['tool-in-spindle'] = self.stat.tool_in_spindle
         self.old['motion-mode'] = self.stat.motion_mode
-        self.old['spindle-or'] = self.stat.spindl[0]['override']
+        self.old['spindle-or'] = self.stat.spindle[0]['override']
         self.old['feed-or'] = self.stat.feedrate
         self.old['rapid-or'] = self.stat.rapidrate
         self.old['feed-hold']  = self.stat.feed_hold_enabled
