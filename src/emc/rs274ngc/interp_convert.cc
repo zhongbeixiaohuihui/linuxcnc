@@ -4307,12 +4307,12 @@ int Interp::convert_stop(block_pointer block,    //!< pointer to a block of RS27
 
 /*7*/
     for (int s = 0; s < settings->num_spindles; s++){
-    	STOP_SPINDLE_TURNING(s);
-    	settings->spindle_turning[s] = CANON_STOPPED;
-    	ENABLE_SPEED_OVERRIDE(s);
-    	settings->speed_override[s] = true;
-		/* turn off FPR */
-		SET_SPINDLE_MODE(s, 0);
+        STOP_SPINDLE_TURNING(s);
+        settings->spindle_turning[s] = CANON_STOPPED;
+
+        settings->speed_override[s] = true;
+        /* turn off FPR */
+        SET_SPINDLE_MODE(s, 0);
     }
 
 /*8*/ settings->motion_mode = G_1;

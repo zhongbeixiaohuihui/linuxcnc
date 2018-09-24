@@ -76,7 +76,7 @@ void STRAIGHT_TRAVERSE(int lineno,
                               double u, double v, double w) {}
 void SET_FEED_RATE(double rate) {}
 void SET_FEED_REFERENCE(CANON_FEED_REFERENCE reference) {}
-void SET_FEED_MODE(int mode) {}
+void SET_FEED_MODE(0, int mode) {}
 void SET_MOTION_CONTROL_MODE(CANON_MOTION_MODE mode, double tolerance) {}
 void SET_NAIVECAM_TOLERANCE(double tolerance) {}
 void SET_CUTTER_RADIUS_COMPENSATION(double radius) {}
@@ -121,14 +121,14 @@ void STRAIGHT_PROBE(int lineno,
                            double u, double v, double w, unsigned char probe_type) {}
 void STOP() {}
 void DWELL(double seconds) {}
-void SET_SPINDLE_MODE(double) {}
+void SET_SPINDLE_MODE(0 0  double) {}
 void SPINDLE_RETRACT_TRAVERSE() {}
 void START_SPINDLE_CLOCKWISE(int) {}
 void START_SPINDLE_COUNTERCLOCKWISE(int) {}
-void SET_SPINDLE_SPEED(double r) {}
-void STOP_SPINDLE_TURNING() {}
+void SET_SPINDLE_SPEED(0, double r) {}
+void STOP_SPINDLE_TURNING(0) {}
 void SPINDLE_RETRACT() {}
-void ORIENT_SPINDLE(double orientation, int mode) {}
+void ORIENT_SPINDLE(0, double orientation, int mode) {}
 void WAIT_SPINDLE_ORIENT_COMPLETE(double timeout) {}
 void LOCK_SPINDLE_Z() {}
 void USE_SPINDLE_FORCE() {}
@@ -146,8 +146,8 @@ void DISABLE_ADAPTIVE_FEED() {}
 void ENABLE_ADAPTIVE_FEED() {}
 void DISABLE_FEED_OVERRIDE() {}
 void ENABLE_FEED_OVERRIDE() {}
-void DISABLE_SPEED_OVERRIDE() {}
-void ENABLE_SPEED_OVERRIDE() {}
+void DISABLE_SPEED_OVERRIDE(0) {}
+void ENABLE_SPEED_OVERRIDE(0) {}
 void DISABLE_FEED_HOLD() {}
 void ENABLE_FEED_HOLD() {}
 void FLOOD_OFF() {}
