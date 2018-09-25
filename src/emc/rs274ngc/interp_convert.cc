@@ -4227,6 +4227,11 @@ int Interp::convert_stop(block_pointer block,    //!< pointer to a block of RS27
   CHP(move_endpoint_and_flush(settings, cx, cy));
   dequeue_canons(settings);
 
+  // M99 as subroutine return is handled in interp_o_word.cc
+  // convert_control_functions()
+  CHKS((block->m_modes[4] == 99 && settings->call_level > 0),
+        (_("Bug:  Reached convert_stop() from M99 as subprogram return")));
+
   if (block->m_modes[4] == 0) {
     PROGRAM_STOP();
   } else if (block->m_modes[4] == 60) {
@@ -4234,7 +4239,16 @@ int Interp::convert_stop(block_pointer block,    //!< pointer to a block of RS27
     PROGRAM_STOP();
   } else if (block->m_modes[4] == 1) {
     OPTIONAL_PROGRAM_STOP();
-  } else if ((block->m_modes[4] == 2) || (block->m_modes[4] == 30)) {   /* reset stuff here */
+  } else if (block->m_modes[4] == 99 && _setup.loop_on_main_m99) {
+    // Fanuc-style M99 main program endless loop
+    logDebug("M99 main program endless loop");
+
+    loop_to_beginning(settings);  // return control to beginning of file
+    FINISH();  // Output any final linked segments
+    return INTERP_EXECUTE_FINISH;  // tell task to issue any queued commands
+  } else if ((block->m_modes[4] == 2) || (block->m_modes[4] == 30) ||
+            (block->m_modes[4] == 99 && !_setup.loop_on_main_m99)
+            ) {   /* reset stuff here */
 /*1*/
     settings->current_x += settings->origin_offset_x;
     settings->current_y += settings->origin_offset_y;
