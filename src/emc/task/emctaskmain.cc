@@ -1,5 +1,5 @@
 /********************************************************************
-* Description: emctaskmain.cc
+* Description: emctaskmain.cc   2018-9-29 在github建立Linuxcnc仓库
 *   Main program for EMC task level
 *
 *   Derived from a work by Fred Proctor & Will Shackleford
