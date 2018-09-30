@@ -28,10 +28,16 @@
   waiting for IO, etc. Once they are satisfied, it issues the command, and
   sets execState to the postconditions. Once those are satisfied, it gets
   the next item off the interp_list, and so on.
+  emcTaskExecute() 执行一个大的switch选择。如果它完成了就从interp_list链表中
+  获取下一个项目，并将execState设置为这方面的先决条件。
+  一旦条件满足就立刻发布指令，并且将execState设置为后置条件。
+  一旦条件都满足了，就从interp_list链表中获取下一个项目。
+  	
 
   4.  preconditions and postconditions are only looked at in conjunction
   with commands on the interp_list. Immediate commands won't have any
   pre- or postconditions associated with them looked at.
+  先决条件与后置条件仅仅是查看interp_list链表上命令之间的连接
 
   5.  At this point, nothing in this file adds anything to the interp_list.
   This could change, for example, when defining pre- and postconditions for
@@ -44,6 +50,7 @@
   polls on the variable 'steppingWait' which is reset to zero when a
   step command is received, and set to one when the command is
   issued.
+  这将轮询变量'steppingWait'，该变量在接收到步骤命令时重置为零，并在发出命令时设置为1。
   */
 
 #include <stdio.h>		// vsprintf()
