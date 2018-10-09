@@ -44,7 +44,7 @@
 static int mdiOrAuto = EMC_TASK_MODE_AUTO;
 
 InterpBase *pinterp=0;
-#define interp (*pinterp)
+#define interp (*pinterp)  //解释器
 setup_pointer _is = 0; // helper for gdb hardware watchpoints FIXME
 
 

@@ -21,6 +21,7 @@
   machine. Many of the commands just go out immediately to the
   subsystems (motion and IO). In auto mode, the interpreter is called
   and as a result the interp_list is appended with NML commands.
+  在自动模式下，调用解释器，因此interp_list附加了NML命令。
 
   3.  emcTaskExecute() executes a big switch on execState. If it's done,
   it gets the next item off the interp_list, and sets execState to the
@@ -507,7 +508,7 @@ void readahead_reading(void)
                     int count = 0;
 interpret_again:
 		    if (emcTaskPlanIsWait()) {
-			// delay reading of next line until all is done
+			// delay reading of next line until all is done 延迟读取下一行，直到完成所有操作
 			if (interp_list.len() == 0 &&
 			    emcTaskCommand == 0 &&
 			    emcStatus->task.execState ==
@@ -562,7 +563,7 @@ interpret_again:
 				// outstanding is completed
 				emcTaskPlanSetWait();
 				// and resynch interp WM
-				emcTaskQueueCommand(&taskPlanSynchCmd);
+				emcTaskQueueCommand(&taskPlanSynchCmd); // puts command on interp list
 			    } else if (execRetval != 0) {
 				// end of file
 				emcStatus->task.interpState =
@@ -1080,7 +1081,7 @@ static int emcTaskPlan(void)
 		    emcTaskQueueCommand(emcCommand);
 		    // signify no more reading
 		    emcTaskPlanSetWait();
-		    // then resynch interpreter
+		    // then resynch interpreter 重新同步解释器
 		    emcTaskQueueCommand(&taskPlanSynchCmd);
 		    break;
 		    // otherwise we can't handle it
