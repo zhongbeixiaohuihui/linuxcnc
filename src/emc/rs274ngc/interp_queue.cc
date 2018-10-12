@@ -439,7 +439,7 @@ void qc_scale(double scale) {
         }
     }
 }
-
+//出队规范命令 将存入block中的G代码行进行解释，并添加到解释链表中
 void dequeue_canons(setup_pointer settings) {
 
     if(debug_qc) printf("dequeueing: endpoint is now invalid\n");
