@@ -1478,6 +1478,10 @@ _setup.line_length will be set by read_text. This will be zero if the
 line is blank or consists of nothing but a slash. If the length is not
 zero, this parses the line into the _setup.block1.
 
+这将从命令字符串中读取一行NC代码，或者从当前打开的文件中读取（如果命令字符串为NULL）。 
+_setup.line_length将由read_text设置。 如果该行为空或仅包含斜线，则该值为零。 
+如果长度不为零，则将该行解析为_setup.block1。
+
 */
 
 int Interp::_read(const char *command)  //!< may be NULL or a string to read
@@ -1489,6 +1493,11 @@ int Interp::_read(const char *command)  //!< may be NULL or a string to read
   // in sync(), not here. This would make correct parameter values available 
   // without doing a read() (e.g. from Python).
   // Unfortunately synch() isnt called in preview (gcodemodule)
+  /*
+	此输入读取代码位于错误的位置。 它应该在sync（）中执行，而不是在这里。 
+	这样可以在不执行read（）的情况下（例如从Python）获得正确的参数值。
+	不幸的是，在预览中没有调用synch（）（gcodemodule）
+  */
 
 #if 0
   if (_setup.probe_flag) {

@@ -606,6 +606,8 @@ program_x and program_y when cutter radius compensation is on.
 current_z is the position of the tool tip in program coordinates when
 tool length compensation is using the actual tool length; it is the
 position of the spindle when tool length is zero.
+current_z是刀具长度补偿使用实际刀具长度时刀尖在程序坐标中的位置;
+
 
 In a setup, the axis_offset values are set by g92 and the origin_offset
 values are set by g54 - g59.3. The net origin offset uses both values
@@ -635,8 +637,8 @@ struct setup
   double v_axis_offset, v_current, v_origin_offset;
   double w_axis_offset, w_current, w_origin_offset;
 
-  int active_g_codes[ACTIVE_G_CODES];  // array of active G codes
-  int active_m_codes[ACTIVE_M_CODES];  // array of active M codes
+  int active_g_codes[ACTIVE_G_CODES];  // array of active G codes 激活状态G代码  模态G代码
+  int active_m_codes[ACTIVE_M_CODES];  // array of active M codes 激活状态M代码  模态M代码
   double active_settings[ACTIVE_SETTINGS];     // array of feed, speed, etc.
   bool arc_not_allowed;       // we just exited cutter compensation, so we error if the next move isn't straight
   double axis_offset_x;         // X-axis g92 offset
@@ -657,7 +659,7 @@ struct setup
   double current_x;             // current X-axis position
   double current_y;             // current Y-axis position
   double current_z;             // current Z-axis position
-  double cutter_comp_radius;    // current cutter compensation radius
+  double cutter_comp_radius;    // current cutter compensation radius 刀具补偿半径
   int cutter_comp_orientation;  // current cutter compensation tool orientation
   int cutter_comp_side;         // current cutter compensation side
   double cycle_cc;              // cc-value (normal) for canned cycles
