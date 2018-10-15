@@ -115,7 +115,7 @@ static int comp_id;				/* component ID */
 * Description: emcIoNmlGet()
 *		Attempts to connect to NML buffers and set the relevant
 *		pointers.
-*
+*	    尝试连接到NML缓冲区并设置相关指针。
 * Return Value: Zero on success or -1 if can not connect to a buffer.
 *
 * Side Effects: None.
@@ -984,7 +984,7 @@ int main(int argc, char *argv[])
 	case EMC_COOLANT_MIST_ON_TYPE:
 	    rtapi_print_msg(RTAPI_MSG_DBG, "EMC_COOLANT_MIST_ON\n");
 	    emcioStatus.coolant.mist = 1;
-	    *(iocontrol_data->coolant_mist) = 1;
+	    *(iocontrol_data->coolant_mist) = 1; //映射到具体的IO地址
 	    break;
 
 	case EMC_COOLANT_MIST_OFF_TYPE:

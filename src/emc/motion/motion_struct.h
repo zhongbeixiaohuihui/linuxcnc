@@ -12,7 +12,7 @@
 #ifndef MOTION_STRUCT_H
 #define MOTION_STRUCT_H
 
-/* big comm structure, for upper memory */
+/* big comm structure, for upper memory 高级通信结构，用于高级内存 */
     typedef struct emcmot_struct_t {
 	struct emcmot_command_t command;	/* struct used to pass commands/data
 					   to the RT module from usr space */

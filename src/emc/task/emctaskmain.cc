@@ -957,20 +957,20 @@ static int emcTaskPlan(void)
 		retval = emcTaskIssueCommand(emcCommand);
 		break;
 
-		// queued commands
+		// queued commands 排队命令
 
 	    case EMC_TASK_PLAN_EXECUTE_TYPE:
 		// resynch the interpreter, since we may have moved
-		// externally
-		emcTaskIssueCommand(&taskPlanSynchCmd);
+		// externally 重新同步解释器，因为我们可能已经移动了。
+		emcTaskIssueCommand(&taskPlanSynchCmd); //是不是运动规划重新同步
 		// and now call for interpreter execute
 		retval = emcTaskIssueCommand(emcCommand);
 		break;
 
 	    case EMC_TOOL_LOAD_TOOL_TABLE_TYPE:
-	    case EMC_TOOL_SET_OFFSET_TYPE:
+	    case EMC_TOOL_SET_OFFSET_TYPE: //加载刀具表，设置刀具偏移
 		// send to IO
-		emcTaskQueueCommand(emcCommand);
+		emcTaskQueueCommand(emcCommand); //添加到链表中，等待模式切换到AUTO、MDI时运行？
 		// signify no more reading
 		emcTaskPlanSetWait();
 		// then resynch interpreter
@@ -1060,7 +1060,7 @@ static int emcTaskPlan(void)
 		    break;
 
 		case EMC_TASK_PLAN_STEP_TYPE:
-		    // handles case where first action is to step the program
+		    // handles case where first action is to step the program  逐步执行程序的第一个步骤
 		    taskPlanRunCmd.line = 1;	// run from start
 		    /*! \todo FIXME-- can have GUI set this; send a run instead of a 
 		       step */
@@ -1233,7 +1233,7 @@ static int emcTaskPlan(void)
 		    steppingWait = 0;
 		    if (emcStatus->motion.traj.paused &&
 			emcStatus->motion.traj.queue > 0) {
-			// there are pending motions paused; step them
+			// there are pending motions paused; step them 等待运动暂停
 			emcTrajStep();
 		    } else {
 			emcStatus->task.interpState = (enum EMC_TASK_INTERP_ENUM) interpResumeState;
