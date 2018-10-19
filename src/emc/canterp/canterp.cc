@@ -245,7 +245,7 @@ int Canterp::read() {
     if(!fgets(buf, sizeof(buf), f)) return INTERP_ENDFILE;
     return canterp_parse(buf);
 }
-
+//G代码解释器执行函数 通过字符串对比完成
 int Canterp::execute(const char *line) {
     int retval;
     double d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11;
@@ -253,7 +253,7 @@ int Canterp::execute(const char *line) {
     char s1[256];
 
     if (line) {
-	retval = canterp_parse((char *) line);
+	retval = canterp_parse((char *) line); //提取the_command_name、the_command_args、the_command参数
 	if (retval)
 	    return retval;
     }
@@ -373,7 +373,7 @@ int Canterp::execute(const char *line) {
 	return 0;
     }
 
-    if (!strcmp(the_command_name, "FLOOD_ON")) {
+    if (!strcmp(the_command_name, "FLOOD_ON")) {  //strcmp若字符串相等则返回零
 	FLOOD_ON();
 	return 0;
     }

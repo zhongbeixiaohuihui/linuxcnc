@@ -566,12 +566,13 @@ int emcTaskPlanExecute(const char *command)
     int inpos = emcStatus->motion.traj.inpos;	// 1 if in position, 0 if not.
 
     if (command != 0) {		// Command is 0 if in AUTO mode, non-null if in MDI mode.
+                            //	如果处于AUTO模式，则命令为0;如果处于MDI模式，则为非null。
 	// Don't sync if not in position.
 	if ((*command != 0) && (inpos)) {
 	    interp.synch();
 	}
     }
-    int retval = interp.execute(command);
+    int retval = interp.execute(command); //G代码解释器调用执行
     if (retval > INTERP_MIN_ERROR) {
 	print_interp_error(retval);
     }
@@ -650,7 +651,7 @@ int emcTaskPlanCommand(char *cmd)
 {
     char buf[LINELEN];
 
-    strcpy(cmd, interp.command(buf, LINELEN));
+    strcpy(cmd, interp.command(buf, LINELEN)); //char *strcpy(char* dest, const char *src);
 
     if (emc_debug & EMC_DEBUG_INTERP) {
         rcs_print("emcTaskPlanCommand(%s) called. (line_number=%d)\n",

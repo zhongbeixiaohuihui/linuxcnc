@@ -1560,7 +1560,7 @@ int NML::format_output()
 /*************************************************************
 * NML Member Function: write()
 * Purpose: This write function provides users with an alternative
-* style of writing a message.
+* style of writing a message.此写入功能为用户提供了另一种编写消息的方式。
 * Parameters:
 * NMLmsg &nml_msg - Reference to the message to be written.
 * Returns:

@@ -1,6 +1,6 @@
 /********************************************************************
 * Description: emccanon.cc
-*   Canonical definitions for 3-axis NC application
+*   Canonical definitions for 3-axis NC application 3轴NC应用的典型定义
 *
 *   Derived from a work by Fred Proctor & Will Shackleford
 *

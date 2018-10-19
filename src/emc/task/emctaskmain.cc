@@ -499,7 +499,7 @@ static int checkInterpList(NML_INTERP_LIST * il, EMC_STAT * stat)
 }
 extern int emcTaskMopup();
 
-void readahead_reading(void)
+void readahead_reading(void) //预读 
 {
     int readRetval;
     int execRetval;
@@ -541,7 +541,7 @@ interpret_again:
 			    emcTaskPlanCommand((char *) &emcStatus->task.
 					       command);
 			    // and execute it
-			    execRetval = emcTaskPlanExecute(0);
+			    execRetval = emcTaskPlanExecute(0);//函数中调用解释器执行函数
 			    // line number may need update after
 			    // returns from subprograms in external
 			    // files
@@ -2561,7 +2561,7 @@ static int emcTaskExecute(void)
 	    emcStatus->task.interpState != EMC_TASK_INTERP_PAUSED) {
 	    if (0 == emcTaskCommand) {
 		// need a new command
-		emcTaskCommand = interp_list.get();
+		emcTaskCommand = interp_list.get(); //解释器链表获得新命令
 		// interp_list now has line number associated with this-- get
 		// it
 		if (0 != emcTaskCommand) {
