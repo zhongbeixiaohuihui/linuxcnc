@@ -342,7 +342,7 @@ static int init_hal_io(void)
 	if ((retval = hal_pin_float_newf(HAL_IN, &(emcmot_hal_data->analog_input[n]), mot_comp_id, "motion.analog-in-%02d", n)) != 0) goto error;
     }
 
-    /* export machine wide hal pins */
+    /* export machine wide hal pins  在共享内存块内分配内存*/
     if ((retval = hal_pin_bit_newf(HAL_OUT, &(emcmot_hal_data->motion_enabled), mot_comp_id, "motion.motion-enabled")) != 0) goto error;
     if ((retval = hal_pin_bit_newf(HAL_OUT, &(emcmot_hal_data->in_position), mot_comp_id, "motion.in-position")) != 0) goto error;
     if ((retval = hal_pin_s32_newf(HAL_OUT, &(emcmot_hal_data->motion_type), mot_comp_id, "motion.motion-type")) != 0) goto error;
@@ -368,8 +368,8 @@ static int init_hal_io(void)
     if ((retval = hal_param_s32_newf(HAL_RO, &(emcmot_hal_data->debug_s32_1), mot_comp_id, "motion.debug-s32-1")) != 0) goto error;
 
     // FIXME - debug only, remove later
-    // export HAL parameters for some trajectory planner internal variables
-    // so they can be scoped
+    // export HAL parameters for some trajectory planner internal variables 导出HAL的一些内部轨迹规划变量参数
+    // so they can be scoped  所以他们可以成为范围
     if ((retval = hal_param_float_newf(HAL_RO, &(emcmot_hal_data->traj_pos_out), mot_comp_id, "traj.pos_out")) != 0) goto error;
     if ((retval = hal_param_float_newf(HAL_RO, &(emcmot_hal_data->traj_vel_out), mot_comp_id, "traj.vel_out")) != 0) goto error;
     if ((retval = hal_param_u32_newf(HAL_RO, &(emcmot_hal_data->traj_active_tc), mot_comp_id, "traj.active_tc")) != 0) goto error;
@@ -387,7 +387,7 @@ static int init_hal_io(void)
     if ((retval = hal_pin_float_newf(HAL_OUT, &(emcmot_hal_data->last_period_ns), mot_comp_id, "motion.servo.last-period-ns")) != 0) goto error;
 #endif
 
-    // export timing related HAL pins so they can be scoped
+    // export timing related HAL pins so they can be scoped  导出时序相关的HAL引脚，因此它们可以作用域
     if ((retval = hal_pin_float_newf(HAL_OUT, &(emcmot_hal_data->tooloffset_x), mot_comp_id, "motion.tooloffset.x")) != 0) goto error;
     if ((retval = hal_pin_float_newf(HAL_OUT, &(emcmot_hal_data->tooloffset_y), mot_comp_id, "motion.tooloffset.y")) != 0) goto error;
     if ((retval = hal_pin_float_newf(HAL_OUT, &(emcmot_hal_data->tooloffset_z), mot_comp_id, "motion.tooloffset.z")) != 0) goto error;
@@ -828,23 +828,24 @@ static int init_comm_buffers(void)
 
 /* init_threads() creates realtime threads, exports functions to
    do the realtime control, and adds the functions to the threads.
+   init_threads（）创建实时线程，导出函数以执行实时控制，并将函数添加到线程。
 */
 static int init_threads(void)
 {
     double base_period_sec, servo_period_sec;
-    int servo_base_ratio;
+    int servo_base_ratio; //伺服与基本时基比率
     int retval;
 
     rtapi_print_msg(RTAPI_MSG_INFO, "MOTION: init_threads() starting...\n");
 
-    /* if base_period not specified, assume same as servo_period */
+    /* if base_period not specified, assume same as servo_period  如果基本时间周期未规定，假定基本时间周期与伺服周期相等*/
     if (base_period_nsec == 0) {
 	base_period_nsec = servo_period_nsec;
     }
     if (traj_period_nsec == 0) {
 	traj_period_nsec = servo_period_nsec;
     }
-    /* servo period must be greater or equal to base period */
+    /* servo period must be greater or equal to base period 伺服周期必须大于或等于基准周期 */
     if (servo_period_nsec < base_period_nsec) {
 	rtapi_print_msg(RTAPI_MSG_ERR,
 	    "MOTION: bad servo period %ld nsec\n", servo_period_nsec);
@@ -855,10 +856,10 @@ static int init_threads(void)
     servo_period_sec = servo_period_nsec * 0.000000001;
     /* calculate period ratios, round to nearest integer */
     servo_base_ratio = (servo_period_sec / base_period_sec) + 0.5;
-    /* revise desired periods to be integer multiples of each other */
+    /* revise desired periods to be integer multiples of each other 将期望的周期修改为彼此的整数倍 */
     servo_period_nsec = base_period_nsec * servo_base_ratio;
     /* create HAL threads for each period */
-    /* only create base thread if it is faster than servo thread */
+    /* only create base thread if it is faster than servo thread  只有在基线程比伺服线程快的情况下，才创建基线程*/
     if (servo_base_ratio > 1) {
 	retval = hal_create_thread("base-thread", base_period_nsec, base_thread_fp);
 	if (retval < 0) {
@@ -875,7 +876,7 @@ static int init_threads(void)
 	    servo_period_nsec);
 	return -1;
     }
-    /* export realtime functions that do the real work */
+    /* export realtime functions that do the real work 导出实时方法去做实时工作*/
     retval = hal_export_funct("motion-controller", emcmotController, 0	/* arg 
 	 */ , 1 /* uses_fp */ , 0 /* reentrant */ , mot_comp_id);
     if (retval < 0) {

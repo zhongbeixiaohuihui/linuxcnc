@@ -600,7 +600,7 @@ int hal_pin_s32_newf(hal_pin_dir_t dir,
 }
 
 
-/* this is a generic function that does the majority of the work. */
+/* this is a generic function that does the majority of the work. 这是执行大部分工作的通用函数 */
 
 int hal_pin_new(const char *name, hal_type_t type, hal_pin_dir_t dir,
     void **data_ptr_addr, int comp_id)

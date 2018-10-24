@@ -46,10 +46,10 @@ typedef struct {
     hal_bit_t *spindle_incr_speed;  /* spindle spin-increase output */
     hal_bit_t *spindle_decr_speed;  /* spindle spin-decrease output */
 
-    // simple output for brake
+    // simple output for brake 制动输出
     hal_bit_t *spindle_brake;   /* spindle brake output */
 
-    // output of a prescribed speed (to hook-up to a velocity controller)
+    // output of a prescribed speed (to hook-up to a velocity controller) 输出规定的速度（连接到速度控制器）
     hal_float_t *spindle_speed_out; /* spindle speed output */
     hal_float_t *spindle_speed_out_rps; /* spindle speed output */
     hal_float_t *spindle_speed_out_abs; /* spindle speed output absolute*/
@@ -61,7 +61,7 @@ typedef struct {
     hal_float_t *spindle_revs;
     hal_bit_t *spindle_is_atspeed;
 
-    // spindle orient
+    // spindle orient 主轴定位
     hal_float_t *spindle_orient_angle;  /* out: desired spindle angle, degrees */
     hal_s32_t   *spindle_orient_mode;   /* out: 0: least travel; 1: cw; 2: ccw */
     hal_bit_t   *spindle_orient;    /* out: signal orient in progress */
@@ -130,7 +130,7 @@ typedef struct {
 
     hal_s32_t   *ajog_counts;	/* WPI: jogwheel position input */
     hal_bit_t   *ajog_enable;	/* RPI: enable jogwheel */
-    hal_float_t *ajog_scale;	/* RPI: distance to jog on each count */
+    hal_float_t *ajog_scale;	/* RPI: distance to jog on each count 每次计算的距离 */
     hal_float_t *ajog_accel_fraction;	/* RPI: to limit wheel jog accel */
     hal_bit_t   *ajog_vel_mode;	/* RPI: true for "velocity mode" jogwheel */
     hal_bit_t   *kb_ajog_active;   /* RPI: executing keyboard jog */
@@ -140,24 +140,24 @@ typedef struct {
 /* machine data */
 
 typedef struct {
-    hal_bit_t *probe_input;	/* RPI: probe switch input */
-    hal_bit_t *enable;		/* RPI: motion inhibit input */
+    hal_bit_t *probe_input;	/* RPI: probe switch input 探头开关输入 */
+    hal_bit_t *enable;		/* RPI: motion inhibit input 运动抑制输入 */
     hal_float_t *adaptive_feed;	/* RPI: adaptive feedrate, 0.0 to 1.0 */
     hal_bit_t *feed_hold;	/* RPI: set TRUE to stop motion maskable with g53 P1*/
-    hal_bit_t *feed_inhibit;	/* RPI: set TRUE to stop motion (non maskable)*/
+    hal_bit_t *feed_inhibit;	/* RPI: set TRUE to stop motion (non maskable 无屏蔽)*/
     hal_bit_t *homing_inhibit;	/* RPI: set TRUE to inhibit homing*/
     hal_bit_t *motion_enabled;	/* RPI: motion enable for all joints */
     hal_bit_t *in_position;	/* RPI: all joints are in position */
     hal_bit_t *coord_mode;	/* RPA: TRUE if coord, FALSE if free */
     hal_bit_t *teleop_mode;	/* RPA: TRUE if teleop mode */
     hal_bit_t *coord_error;	/* RPA: TRUE if coord mode error */
-    hal_bit_t *on_soft_limit;	/* RPA: TRUE if outside a limit */
+    hal_bit_t *on_soft_limit;	/* RPA: TRUE if outside a limit 超出限制为TRUE */
 
-    hal_s32_t *program_line;    /* RPA: program line causing current motion */
-    hal_s32_t *motion_type;	/* RPA: type (feed/rapid) of currently commanded motion */
-    hal_float_t *current_vel;   /* RPI: velocity magnitude in machine units */
-    hal_float_t *requested_vel;   /* RPI: requested velocity magnitude in machine units */
-    hal_float_t *distance_to_go;/* RPI: distance to go in current move*/
+    hal_s32_t *program_line;    /* RPA: program line causing current motion 当前运动的程序行 */
+    hal_s32_t *motion_type;	/* RPA: type (feed进给模式/rapid快移模式) of currently commanded motion */
+    hal_float_t *current_vel;   /* RPI: velocity magnitude in machine units 机器单位的速度大小 */
+    hal_float_t *requested_vel;   /* RPI: requested velocity magnitude in machine units 请求的速度大小，以机器单位衡量*/
+    hal_float_t *distance_to_go;/* RPI: distance to go in current move 需要移动的距离*/
 
     hal_bit_t debug_bit_0;	/* RPA: generic param, for debugging */
     hal_bit_t debug_bit_1;	/* RPA: generic param, for debugging */
@@ -168,7 +168,7 @@ typedef struct {
     hal_s32_t debug_s32_0;	/* RPA: generic param, for debugging */
     hal_s32_t debug_s32_1;	/* RPA: generic param, for debugging */
     
-    hal_bit_t *synch_do[EMCMOT_MAX_DIO]; /* WPI array: output pins for motion synched IO */
+    hal_bit_t *synch_do[EMCMOT_MAX_DIO]; /* WPI array: output pins for motion synched IO 输出IO*/
     hal_bit_t *synch_di[EMCMOT_MAX_DIO]; /* RPI array: input pins for motion synched IO */
     hal_float_t *analog_input[EMCMOT_MAX_AIO]; /* RPI array: input pins for analog Inputs */
     hal_float_t *analog_output[EMCMOT_MAX_AIO]; /* RPI array: output pins for analog Inputs */
@@ -179,9 +179,9 @@ typedef struct {
     hal_u32_t traj_active_tc;	/* RPA: traj internals, for debugging */
     hal_float_t tc_pos[4];	/* RPA: traj internals, for debugging */
     hal_float_t tc_vel[4];	/* RPA: traj internals, for debugging */
-    hal_float_t tc_acc[4];	/* RPA: traj internals, for debugging */
+    hal_float_t tc_acc[4];	/* RPA: traj internals, for debugging  轨迹  内部 调试用 */
 
-    // realtime overrun detection
+    // realtime overrun detection 实时超限检测
     hal_u32_t   *last_period;	/* pin: last period in clocks */
     hal_float_t *last_period_ns;	/* pin: last period in nanoseconds */
 
@@ -196,7 +196,7 @@ typedef struct {
     hal_float_t *tooloffset_w;
 
     spindle_hal_t spindle[EMCMOT_MAX_SPINDLES];     /*spindle data */
-    joint_hal_t joint[EMCMOT_MAX_JOINTS];	/* data for each joint */
+    joint_hal_t joint[EMCMOT_MAX_JOINTS];	/* data for each joint 每一个关节的数据 每一个运动副的数据？？ */
     axis_hal_t axis[EMCMOT_MAX_AXIS];	        /* data for each axis */
 
 } emcmot_hal_data_t;
