@@ -1,6 +1,6 @@
 /********************************************************************
 * Description: cubic.c
-*   Cubic spline interpolation code
+*   Cubic spline interpolation code 三次样条插值代码
 *   Analysis taken in part from Curtis S. Wilson, "How Close Do You
 *   Have to Specify Points In a Contouring Application?", Delta Tau
 *   Data Systems (unpublished).

@@ -2,7 +2,8 @@
 * Description: control.c
 *   emcmotController() is the main loop running at the servo cycle
 *   rate. All state logic and trajectory calcs are called from here.
-*
+*	emcmotController（）是以伺服循环速率运行的主循环。 
+*	从这里调用所有状态逻辑和轨迹计算。
 *   Derived from a work by Fred Proctor & Will Shackleford
 *
 * Author:

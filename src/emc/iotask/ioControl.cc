@@ -1,5 +1,5 @@
 /********************************************************************
-* Description: IoControl.cc
+* Description: IoControl.cc   运行在用户空间，非严格实时。
 *           Simply accepts NML messages sent to the IO controller
 *           outputs those to a HAL pin,
 *           and sends back a "Done" message.

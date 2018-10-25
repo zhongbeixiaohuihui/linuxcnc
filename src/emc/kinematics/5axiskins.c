@@ -1,6 +1,6 @@
 /********************************************************************
 * Description: 5axiskins.c
-*   kinematics for XYZBC 5 axis bridge mill
+*   kinematics for XYZBC 5 axis bridge mill 五轴铣床
 *
 *   Derived from a work by Fred Proctor & Will Shackleford
 *

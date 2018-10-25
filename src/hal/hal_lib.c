@@ -84,7 +84,7 @@ static int lib_mem_id = 0;	/* RTAPI shmem ID for library module */
 ************************************************************************/
 
 /* These functions are used internally by this file.  The code is at
-   the end of the file.  */
+   the end of the file.  这些函数由此文件在内部使用*/
 
 /** init_hal_data() initializes the entire HAL data structure, only
     if the structure has not already been initialized.  (The init

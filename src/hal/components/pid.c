@@ -13,7 +13,7 @@
 /** This file, 'pid.c', is a HAL component that provides Proportional/
     Integeral/Derivative control loops.  It is a realtime component.
 
-    It supports a maximum of 16 PID loops.
+    It supports a maximum of 16 PID loops. 它最多支持16个PID循环。
 
     The number of pid components is set by the module parameter 'num_chan='
     when the component is insmod'ed.  Alternatively, use the
@@ -27,6 +27,8 @@
     Each loop has a number of pins and parameters, whose names begin
     with 'pid.x.', where 'x' is the channel number.  Channel numbers
     start at zero.
+    每个循环都有许多引脚和参数，其名称以“pid.x.”开头，
+    其中“x”是通道号。 通道编号从零开始。
 
     The three most important pins are 'command', 'feedback', and
     'output'.  For a position loop, 'command' and 'feedback' are
@@ -96,6 +98,8 @@
     This component exports one function called 'pid.x.do-pid-calcs'
     for each PID loop.  This allows loops to be included in different
     threads and execute at different rates.
+    该组件导出一个名为'pid.x.do-pid-calcs'的函数
+    对于每个PID循环。 这允许循环包含在不同的线程中并以不同的速率执行。
 */
 
 /** Copyright (C) 2003 John Kasunich
@@ -137,7 +141,7 @@ MODULE_AUTHOR("John Kasunich");
 MODULE_DESCRIPTION("PID Loop Component for EMC HAL");
 MODULE_LICENSE("GPL");
 static int num_chan;		/* number of channels */
-static int default_num_chan = 3;
+static int default_num_chan = 3; //默认三轴XYZ 默认有3个PID循环 分别控制不同轴闭环。
 RTAPI_MP_INT(num_chan, "number of channels");
 
 static int howmany;
@@ -158,6 +162,10 @@ RTAPI_MP_INT(debug, "enables optional params");
     accessed, the next item(s) will be pulled into the cache.  In
     addition, items that are written are grouped together, so only
     a few cache lines will need to be written back to main memory.
+
+    此结构包含单个PID循环的运行时数据。
+    数据被安排来优化速度 - 它们按照访问它们的顺序放置，这样当访问一个项目时，
+	下一个项目将被拉入缓存。 此外，写入的项目组合在一起，因此只需要将少量高速缓存行写回主存储器。
 */
 
 typedef struct {
@@ -202,7 +210,7 @@ typedef struct {
     char prev_ie;
 } hal_pid_t;
 
-/* pointer to array of pid_t structs in shared memory, 1 per loop */
+/* pointer to array of pid_t structs in shared memory, 1 per loop 指向共享内存中pid_t结构数组的指针，每个循环1个*/
 static hal_pid_t *pid_array;
 
 /* other globals */
@@ -249,7 +257,7 @@ int rtapi_app_main(void)
 	return -1;
     }
     /* have good config info, connect to the HAL */
-    comp_id = hal_init("pid");
+    comp_id = hal_init("pid"); //相当于在/dev/目录下生成一个设备名？
     if (comp_id < 0) {
 	rtapi_print_msg(RTAPI_MSG_ERR, "PID: ERROR: hal_init() failed\n");
 	return -1;
@@ -267,15 +275,15 @@ int rtapi_app_main(void)
 	/* export everything for this loop */
         if(num_chan) {
             char buf[HAL_NAME_LEN + 1];
-            rtapi_snprintf(buf, sizeof(buf), "pid.%d", n);
-	    retval = export_pid(&(pid_array[n]), buf);
+            rtapi_snprintf(buf, sizeof(buf), "pid.%d", n); //字符串合并函数
+	    retval = export_pid(&(pid_array[n]), buf); //导出参数与函数
         } else {
 	    retval = export_pid(&(pid_array[n]), names[i++]);
         }
 
 	if (retval != 0) {
 	    rtapi_print_msg(RTAPI_MSG_ERR,
-		"PID: ERROR: loop %d var export failed\n", n);
+		"PID: ERROR: loop %d var export failed\n", n); //第n个循环PID参数与函数导出失败
 	    hal_exit(comp_id);
 	    return -1;
 	}
@@ -660,7 +668,7 @@ static int export_pid(hal_pid_t * addr, char * prefix)
     /* export function for this loop */
     rtapi_snprintf(buf, sizeof(buf), "%s.do-pid-calcs", prefix);
     retval =
-	hal_export_funct(buf, calc_pid, addr, 1, 0, comp_id);
+	hal_export_funct(buf, calc_pid, addr, 1, 0, comp_id); //导出第N个PID循环的calc_pid函数
     if (retval != 0) {
 	rtapi_print_msg(RTAPI_MSG_ERR,
 	    "PID: ERROR: do_pid_calcs funct export failed\n");

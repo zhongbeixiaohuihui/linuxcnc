@@ -10,27 +10,32 @@
 *   implimentation leaving pure realtime data to be handled by
 *   emcmotCommandHandler() - This would provide a small performance
 *   increase on slower systems.
+*  大多数配置最好通过ioctl implimentation传递，留下纯实时数据由emcmotCommandHandler（）处理 
+*  - 这将在较慢的系统上提供小的性能提升。
+*
 *
 * jmk says:
 *
 *   Using commands to set config parameters is "undesireable", because
 *   of the large amount of code needed for each parameter.  Today you
 *   need to do the following to add a single new parameter called foo:
+*	添加一个名为foo的新参数
 *
 *   1)  Add a member 'foo' to the config or joint structure in motion.h
 *   2)  Add a command 'EMCMOT_SET_FOO" to the cmd_code_t enum in motion.h
 *   3)  Add a field to the command_t struct for the value used by
 *       the set command (if there isn't already one that can be used.)
+*       在command_t结构中添加一个字段，以获取set命令使用的值（如果还没有可以使用的字段）。
 *   4)  Add a case to the giant switch statement in command.c to
 *       handle the 'EMCMOT_SET_FOO' command.
 *   5)  Write a function emcSetFoo() in taskintf.cc to issue the command.
-*   6)  Add a prototype for emcSetFoo() to emc.hh
+*   6)  Add a prototype for emcSetFoo() to emc.hh  在emc.hh中添加一个emcSetFoo()的原型
 *   7)  Add code to iniaxis.cc (or one of the other inixxx.cc files) to
 *       get the value from the ini file and call emcSetFoo().  (Note
 *       that each parameter has about 16 lines of code, but the code
 *       is identical except for variable/parameter names.)
 *   8)  Add more code to iniaxis.cc to write the new value back out
-*       to the ini file.
+*       to the ini file. 向iniaxis.cc添加更多代码，将新值写回到ini文件中
 *   After all that, you have the abililty to get a number from the
 *   ini file to a structure in shared memory where the motion controller
 *   can actually use it.  However, if you want to manipulate that number
@@ -43,6 +48,8 @@
 *       case label added.
 *   12) Add cases to two giant switch statements in emc.cc, associated
 *       with looking up and formating the command.
+*	将案例添加到emc.cc中的两个巨型switch语句中，与查找和格式化命令相关联。
+*
 *
 *
 *   Derived from a work by Fred Proctor & Will Shackleford

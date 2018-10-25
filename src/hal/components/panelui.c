@@ -2,8 +2,8 @@
 * Description:  panelui.c
               A User space program to connect to "sampler", a HAL component that
 *       can be used to sample data from HAL pins.
-*       It decodes keyboard codes then update pins/linuxcnc commands.
-*       The key codes are patterned after the MESA 7i73 card output.
+*       It decodes keyboard codes then update pins/linuxcnc commands.它解码键盘代码然后更新pins / linuxcnc命令。
+*       The key codes are patterned after the MESA 7i73 card output. 在MESA 7i73卡输出后，键码被图案化。
 *       There is also a realtime program sim_matrix_kb that outputs keycodes.
 *       Users can add a handler.py file to include their own python routines.
 *

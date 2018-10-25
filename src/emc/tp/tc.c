@@ -2,7 +2,7 @@
 ********************************************************************
 * Description: tc.c
 *\brief Discriminate-based trajectory planning
-*
+* 主要实现轨迹规划
 *\author Derived from a work by Fred Proctor & Will Shackleford
 *\author rewritten by Chris Radek
 *

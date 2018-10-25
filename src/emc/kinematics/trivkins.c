@@ -1,7 +1,7 @@
 /********************************************************************
 * Description: trivkins.c
 *   general trivkins for 3 axis Cartesian machine
-*
+*	一般三轴设备运动学
 *   Derived from a work by Fred Proctor & Will Shackleford
 *
 * License: GPL Version 2
