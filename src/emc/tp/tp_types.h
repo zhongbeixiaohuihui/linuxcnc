@@ -86,7 +86,7 @@ typedef struct {
 /**
  * Trajectory planner state structure.
  * Stores persistant data for the trajectory planner that should be accessible
- * by outside functions.
+ * by outside functions. 存储应由外部函数访问的轨迹规划器的持久数据。
  */
 typedef struct {
     TC_QUEUE_STRUCT queue;

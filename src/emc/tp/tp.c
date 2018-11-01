@@ -1,6 +1,6 @@
 /********************************************************************
 * Description: tp.c
-*   Trajectory planner based on TC elements
+*   Trajectory planner based on TC elements 基于TC元素的轨迹规划器
 *
 *   Derived from a work by Fred Proctor & Will Shackleford
 *
@@ -1930,7 +1930,7 @@ int tpAddLine(TP_STRUCT * const tp, EmcPose end, int canon_motion_type, double v
 /**
  * Adds a circular (circle, arc, helix) move from the end of the
  * last move to this new position.
- *
+ * 
  * @param end is the xyz/abc point of the destination.
  *
  * see pmCircleInit for further details on how arcs are specified. Note that
@@ -1964,10 +1964,10 @@ int tpAddCircle(TP_STRUCT * const tp,
             tp->cycleTime,
             enables,
             atspeed);
-    // Setup any synced IO for this move
-    tpSetupSyncedIO(tp, &tc);
+    // Setup any synced IO for this move 为此移动设置任何同步的IO
+    tpSetupSyncedIO(tp, &tc); 
 
-    // Copy over state data from the trajectory planner
+    // Copy over state data from the trajectory planner 从轨迹规划器复制状态数据
     tcSetupState(&tc, tp);
 
     // Setup circle geometry
@@ -2012,7 +2012,7 @@ int tpAddCircle(TP_STRUCT * const tp,
     tcFinalizeLength(prev_tc);
     tcFlagEarlyStop(prev_tc, &tc);
 
-    int retval = tpAddSegmentToQueue(tp, &tc, true);
+    int retval = tpAddSegmentToQueue(tp, &tc, true);//将运动任务添加到队列中
 
     tpRunOptimization(tp);
     return retval;

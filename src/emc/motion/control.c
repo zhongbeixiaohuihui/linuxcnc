@@ -68,6 +68,8 @@ static double servo_period;
    screw error comp and calculating the following error.  For 
    switches, it means debouncing them and setting flags in the
    emcmotStatus structure.
+   在位置反馈的情况下，这意味着消除间隙或螺钉误差补偿并计算以下误差。 
+   对于开关，它意味着对它们进行去抖动并在emcmotStatus结构中设置标志。
 */
 static void process_inputs(void);
 
@@ -76,12 +78,16 @@ static void process_inputs(void);
    in Cartesean coordinates.  It has code to handle machines that
    don't have forward kins, and other special cases, such as when
    the joints have not been homed.
+   'do forward kins（）'获取关节坐标中的位置反馈，并应用正向运动学生成笛卡尔坐标系下的位置反馈。
+   还有部分是用来控制机器不是正向运动或者是没有回到原点的情况。
 */
 static void do_forward_kins(void);
 
 /* probe inputs need to be handled after forward kins are run, since
    cartesian feedback position is latched when the probe fires, and it
    should be based on the feedback read in on this servo cycle.
+   在探测器被触发的时候笛卡尔坐标位置被锁定，
+   并且只有在正向运动过程中探测器输入才会有效。
 */
 static void process_probe_inputs(void);
 
@@ -101,12 +107,14 @@ static void check_for_faults(void);
    a current state, a desired state, and rules determining when the
    state can change.  It should be rewritten as such, but for now
    it consists of code copied exactly from emc1.
+   用于切换free, coordinated, and teleop.三种模式。
 */
 static void set_operating_mode(void);
 
 /* 'handle_jjogwheels()' reads jogwheels, decides if they should be
    enabled, and if so, changes the free mode planner's target position
    when the jogwheel(s) turn.
+   控制旋钮或者按钮的开关。
 */
 static void handle_jjogwheels(void);
 static void handle_ajogwheels(void);
@@ -132,6 +140,7 @@ static void handle_ajogwheels(void);
 
 /* 'get_pos_cmds()' generates the position setpoints.  This includes
    calling the trajectory planner and interpolating its outputs.
+   通过调用轨迹规划和插补，产生位置的设置点。
 */
 static void get_pos_cmds(long period);
 
@@ -148,6 +157,7 @@ static void get_pos_cmds(long period);
    value is in backlash_corr, however has makes step changes when
    the direction reverses.  backlash_filt is a ramped version, and
    that is the one that is later added/subtracted from the position.
+   用于计算间隙和导程误差补偿
 */
 static void compute_screw_comp(void);
 
