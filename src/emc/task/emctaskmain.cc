@@ -762,6 +762,7 @@ static bool allow_while_idle_type() {
   emcTaskPlan()
 
   Planner for NC code or manual mode operations
+  NC代码规划器或手动操作模式
   */
 static int emcTaskPlan(void)
 {
@@ -2573,7 +2574,7 @@ static int emcTaskExecute(void)
 		    emcTrajSetMotionId(emcStatus->task.currentLine);
 		    if (emcStatus->motion.traj.queueFull) {
 			emcStatus->task.execState =
-			    EMC_TASK_EXEC_WAITING_FOR_MOTION_QUEUE;
+			    EMC_TASK_EXEC_WAITING_FOR_MOTION_QUEUE;//等待运动执行队列空间
 		    } else {
 			emcStatus->task.execState =
 			    (enum EMC_TASK_EXEC_ENUM)
@@ -3247,7 +3248,7 @@ int main(int argc, char *argv[])
     bindtextdomain("linuxcnc", EMC2_PO_DIR);
     setlocale(LC_MESSAGES,"");
     setlocale(LC_CTYPE,"");
-    textdomain("linuxcnc");
+    textdomain("linuxcnc"); //文本域
 
     // loop until done
     done = 0;
@@ -3256,7 +3257,7 @@ int main(int argc, char *argv[])
     // and SIGTERM (used by runscript to shut down)
     signal(SIGTERM, emctask_quit);
 
-    // create a backtrace on stderr
+    // create a backtrace on stderr 在stderr上创建一个回溯
     signal(SIGSEGV, backtrace);
     signal(SIGFPE, backtrace);
     signal(SIGUSR1, backtrace);
@@ -3288,6 +3289,7 @@ int main(int argc, char *argv[])
 
     // get our status data structure
     // moved up from emc_startup so we can expose it in Python right away
+    // 从emc_startup向上移动所以我们可以立即用Python公开它
     emcStatus = new EMC_STAT;
 
     // get the Python plugin going
@@ -3340,7 +3342,7 @@ int main(int argc, char *argv[])
         static int gave_soft_limit_message = 0;
         check_ini_hal_items(emcStatus->motion.traj.joints);
 	// read command
-	if (0 != emcCommandBuffer->read()) {
+	if (0 != emcCommandBuffer->read()) {  //从NML中读取命令，NC解释后的内容放在inter.list链表中。 该NML命令为手动操作命令。
 	    // got a new command, so clear out errors
 	    taskPlanError = 0;
 	    taskExecuteError = 0;
