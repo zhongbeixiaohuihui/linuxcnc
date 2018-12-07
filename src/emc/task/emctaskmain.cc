@@ -2502,7 +2502,7 @@ static int emcTaskExecute(void)
     int status;			// status of child from EMC_SYSTEM_CMD
     pid_t pid;			// pid returned from waitpid()
 
-    // first check for an abandoned system command and abort it
+    // first check for an abandoned system command and abort it 首先检查一个废弃的系统命令并中止它
     if (emcSystemCmdPid != 0 &&
 	emcStatus->task.execState !=
 	EMC_TASK_EXEC_WAITING_FOR_SYSTEM_CMD) {
