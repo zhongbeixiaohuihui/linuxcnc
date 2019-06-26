@@ -55,7 +55,7 @@ class NMLmsg {
 					   to zero in the constructor. */
     NMLTYPE type;		/* Each derived type should have a unique id */
     long size;			/* The size is used so that the entire buffer 
-				   is not copied unneccesarily. */
+				   is not copied unneccesarily. 使用大小以便不会不必要地复制整个缓冲区*/
 
     void update(CMS *);
 };

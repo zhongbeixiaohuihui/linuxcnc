@@ -134,7 +134,7 @@ static int init_comm_buffers(void);
 static int init_threads(void);
 
 /* functions called by init_threads() */
-static int setTrajCycleTime(double secs);
+static int setTrajCycleTime(double secs);  
 static int setServoCycleTime(double secs);
 
 /***********************************************************************

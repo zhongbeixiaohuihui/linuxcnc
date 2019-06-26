@@ -1,6 +1,6 @@
 /** HAL stands for Hardware Abstraction Layer, and is used by EMC to
     transfer realtime data to and from I/O devices and other low-level
-    modules.
+    modules.  HAL代表硬件抽象层，EMC使用它来传输和传输I / O设备和其他低级模块的实时数据。
 */
 /********************************************************************
 * Description:  hal_libc.c
