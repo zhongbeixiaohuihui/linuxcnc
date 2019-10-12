@@ -233,7 +233,7 @@ int main( int   argc, char *argv[] )
 	int used=0, NumRung;
 	static int old_level ;
 	old_level = rtapi_get_msg_level();
-	compId=hal_init("classicladder"); //emc
+	compId=hal_init("classicladder"); //emc  被加载到用户空间还是内核空间
 	if (compId<0) return -1; //emc
 	signal(SIGTERM,do_exit); //emc
 	InitModbusMasterBeforeReadConf( );

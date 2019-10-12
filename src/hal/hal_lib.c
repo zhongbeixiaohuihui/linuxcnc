@@ -2917,7 +2917,7 @@ static hal_pin_t *alloc_pin_struct(void)
     /* check the free list */
     if (hal_data->pin_free_ptr != 0) {
 	/* found a free structure, point to it */
-	p = SHMPTR(hal_data->pin_free_ptr);
+	p = SHMPTR(hal_data->pin_free_ptr); //hal_shmem_base共享内存指针赋给p   pin_free_ptr是32位/64位地址
 	/* unlink it from the free list */
 	hal_data->pin_free_ptr = p->next_ptr;
 	p->next_ptr = 0;
